@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@starter/backend-common/*": ["./src/*"],
+      "@starter/database/*": ["../database/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@starter/tsconfig/base.json",
+  "include": [".", "../database/src/**/*.ts"]
+}

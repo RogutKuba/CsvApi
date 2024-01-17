@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@starter/base/*": ["../../packages/base/src/*"],
+      "@starter/backend-common/*": ["../../packages/backend-common/src/*"],
+      "@starter/database/*": ["../../packages/database/src/*"]
+    }
+  },
+  "include": [
+    ".",
+    "../../packages/backend-common/src/**/*.ts",
+    "../../packages/database/src/**/*.ts",
+    "../../packages/base/src/**/*.ts"
+  ],
+  "exclude": ["node_modules"],
+  "extends": "@starter/tsconfig/base.json"
+}

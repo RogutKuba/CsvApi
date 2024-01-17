@@ -1,0 +1,37 @@
+{
+  "name": "@starter/logger",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/logger.js",
+  "types": "dist/logger.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/logger.js",
+      "require": "./dist/logger.js",
+      "types": "./dist/logger.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "swc src --out-dir dist --source-maps true src",
+    "build-tsup": "tsup src",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@axiomhq/winston": "1.0.0-rc.1",
+    "@starter/base": "workspace:*",
+    "@t3-oss/env-core": "^0.7.1",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@starter/eslint-config-custom": "workspace:*",
+    "@starter/tsconfig": "workspace:*",
+    "@swc/cli": "^0.1.63",
+    "@swc/core": "^1.3.101",
+    "@types/node": "^18.11.9",
+    "jest-presets": "workspace:*",
+    "typescript": "^5.2.2"
+  }
+}

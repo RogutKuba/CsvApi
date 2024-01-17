@@ -1,0 +1,42 @@
+{
+  "name": "@starter/api-routes",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch --ignore-folder ./src/generated src",
+    "build": "swc src --out-dir dist --source-maps true src",
+    "build-tsup": "tsup src",
+    "watch": "tsup --watch --ignore-folder ./src/generated src",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@starter/database": "workspace:*",
+    "@types/koa": "^2.13.12",
+    "@types/koa__router": "^12.0.4",
+    "koa-zod-router": "^2.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@starter/eslint-config-custom": "workspace:*",
+    "@starter/tsconfig": "workspace:*",
+    "@swc/cli": "^0.1.63",
+    "@swc/core": "^1.3.101",
+    "@types/node": "^18.11.9",
+    "jest-presets": "workspace:*",
+    "typescript": "^5.2.2"
+  }
+}

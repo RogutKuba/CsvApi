@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "outDir": "./dist"
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@starter/tsconfig/base.json",
+  "include": ["."]
+}
