@@ -1,5 +1,5 @@
 {
-  "name": "@starter/eslint-config-custom",
+  "name": "@billing/eslint-config-custom",
   "license": "MIT",
   "version": "0.0.0",
   "private": true,

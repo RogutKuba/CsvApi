@@ -1,10 +1,10 @@
-import { Button } from "@starter/ui/src/components/button";
+import { Button } from '@billing/ui/src/components/button';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@starter/ui/src/components/dialog";
+} from '@billing/ui/src/components/dialog';
 import {
   Form,
   FormControl,
@@ -12,13 +12,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@starter/ui/src/components/form";
-import { Input } from "@starter/ui/src/components/input";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useApiClient } from "@starter/web/providers/api";
-import { useState } from "react";
+} from '@billing/ui/src/components/form';
+import { Input } from '@billing/ui/src/components/input';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useApiClient } from '@billing/web/providers/api';
+import { useState } from 'react';
 
 const formSchema = z.object({
   title: z.string().min(2),
@@ -37,8 +37,8 @@ export const CreateListItemDialog = ({ children }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      desc: "",
+      title: '',
+      desc: '',
     },
   });
 
@@ -64,15 +64,15 @@ export const CreateListItemDialog = ({ children }: Props) => {
         <DialogTitle>Create a new list item</DialogTitle>
         <div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
               <FormField
                 control={form.control}
-                name="title"
+                name='title'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your title here..." {...field} />
+                      <Input placeholder='Your title here...' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -80,13 +80,13 @@ export const CreateListItemDialog = ({ children }: Props) => {
               />
               <FormField
                 control={form.control}
-                name="desc"
+                name='desc'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Your description here..."
+                        placeholder='Your description here...'
                         {...field}
                       />
                     </FormControl>
@@ -94,7 +94,7 @@ export const CreateListItemDialog = ({ children }: Props) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" loading={loading}>
+              <Button type='submit' loading={loading}>
                 Submit
               </Button>
             </form>

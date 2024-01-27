@@ -1,5 +1,5 @@
 {
-  "name": "@starter/database",
+  "name": "@billing/database",
   "version": "1.0.0",
   "private": true,
   "exports": {
@@ -19,18 +19,17 @@
     "build-tsup": "tsup",
     "type-check": "tsc",
     "lint": "eslint src",
-    "push-m": "drizzle-kit push:mysql",
-    "gen-migration": "drizzle-kit generate:mysql",
-    "run-migration": "tsx src/migrate.ts",
-    "drop-migration": "drizzle-kit drop",
+    "push-m": "drizzle-kit push:sqlite",
+    "gen-m": "drizzle-kit generate:sqlite",
+    "run-m": "tsx src/migrate.ts",
+    "drop-m": "drizzle-kit drop",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@planetscale/database": "^1.11.0",
-    "@starter/base": "workspace:*",
-    "@starter/eslint-config-custom": "workspace:*",
-    "@starter/tsconfig": "workspace:*",
-    "@t3-oss/env-core": "^0.7.1",
+    "@libsql/client": "0.4.0-pre.7",
+    "@billing/base": "workspace:*",
+    "@billing/eslint-config-custom": "workspace:*",
+    "@billing/tsconfig": "workspace:*",
     "dotenv": "^16.3.1",
     "drizzle-kit": "^0.20.1",
     "drizzle-orm": "^0.29.1",

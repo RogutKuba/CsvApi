@@ -1,5 +1,8 @@
+import { AccountEntity } from '@starter/database/schemas/accounts.db';
+import { UserEntity } from '@starter/database/schemas/users.db';
+
 export interface WorkOsUser {
-  object: "user";
+  object: 'user';
   id: string;
   email: string;
   emailVerified: boolean;
@@ -7,4 +10,9 @@ export interface WorkOsUser {
   lastName: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AuthResponse {
+  account: AccountEntity;
+  user: UserEntity;
 }

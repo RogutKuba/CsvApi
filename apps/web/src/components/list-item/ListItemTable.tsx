@@ -5,10 +5,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@starter/ui/src/components/table";
-import { ListItemDrawer } from "@starter/web/components/list-item/ListItemDrawer";
-import { ListItem } from "@starter/web/types/listItem";
-import { useState } from "react";
+} from '@billing/ui/src/components/table';
+import { ListItemDrawer } from '@billing/web/components/list-item/ListItemDrawer';
+import { ListItem } from '@billing/web/types/listItem';
+import { useState } from 'react';
 
 interface Props {
   listItems: ListItem[];
@@ -44,7 +44,7 @@ export const ListItemTable = ({ listItems }: Props) => {
                 setOpen(true);
               }}
             >
-              <TableCell className="font-medium">{item.title}</TableCell>
+              <TableCell className='font-medium'>{item.title}</TableCell>
               <TableCell>{item.description}</TableCell>
               <TableCell>{item.completed}</TableCell>
             </TableRow>

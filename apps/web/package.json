@@ -1,5 +1,5 @@
 {
-  "name": "@starter/web",
+  "name": "@billing/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,10 +11,11 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-icons": "^1.3.0",
-    "@starter/api-tools": "workspace:*",
-    "@starter/tailwind-config": "workspace:*",
-    "@starter/ui": "workspace:*",
+    "@billing/api-routes": "workspace:*",
+    "@billing/tailwind-config": "workspace:*",
+    "@billing/ui": "workspace:*",
     "@t3-oss/env-nextjs": "^0.7.1",
+    "@ts-rest/react-query": "^3.33.0",
     "@types/js-cookie": "^3.0.6",
     "@workos-inc/node": "^4.0.0",
     "jose": "^5.1.3",

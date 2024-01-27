@@ -1,5 +1,5 @@
 {
-  "name": "@starter/tailwind-config",
+  "name": "@billing/tailwind-config",
   "version": "0.1.0",
   "main": "index.ts",
   "license": "MIT",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@types/node": "^20",
-    "@starter/tsconfig": "workspace:*"
+    "@billing/tsconfig": "workspace:*"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

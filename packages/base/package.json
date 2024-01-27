@@ -1,5 +1,5 @@
 {
-  "name": "@starter/base",
+  "name": "@billing/base",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -12,11 +12,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@starter/eslint-config-custom": "workspace:*",
-    "@starter/tsconfig": "workspace:*",
-    "@t3-oss/env-core": "^0.7.1",
-    "@types/node": "^20.10.2",
-    "zod": "^3.22.4"
+    "@billing/eslint-config-custom": "workspace:*",
+    "@billing/tsconfig": "workspace:*",
+    "@types/node": "^20.10.2"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.63",

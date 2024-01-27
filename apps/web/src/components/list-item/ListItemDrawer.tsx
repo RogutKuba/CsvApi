@@ -1,6 +1,6 @@
-import { CheckCircledIcon } from "@radix-ui/react-icons";
-import { Button } from "@starter/ui/src/components/button";
-import { Input } from "@starter/ui/src/components/input";
+import { CheckCircledIcon } from '@radix-ui/react-icons';
+import { Button } from '@billing/ui/src/components/button';
+import { Input } from '@billing/ui/src/components/input';
 import {
   Sheet,
   SheetBody,
@@ -9,8 +9,8 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@starter/ui/src/components/sheet";
-import { ListItem } from "@starter/web/types/listItem";
+} from '@billing/ui/src/components/sheet';
+import { ListItem } from '@billing/web/types/listItem';
 
 interface Props {
   open: boolean;
@@ -27,7 +27,7 @@ export const ListItemDrawer = ({ open, setOpen, selectedItem }: Props) => {
           <SheetDescription>{selectedItem?.description}</SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <CheckCircledIcon className="h-4 w-4" />
+          <CheckCircledIcon className='h-4 w-4' />
         </SheetBody>
       </SheetContent>
     </Sheet>

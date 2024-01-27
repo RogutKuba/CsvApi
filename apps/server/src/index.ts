@@ -1,9 +1,6 @@
-import { logger } from "@starter/logger";
-import { createServer } from "@server/server";
+import { app } from './app';
 
-const port = process.env.PORT || 5001;
-const server = createServer();
-
-server.listen(port, () => {
-  logger.info(`API server running on ${port}.`);
+Bun.serve({
+  fetch: app.fetch,
+  port: process.env.PORT || 3000,
 });

@@ -1,19 +1,24 @@
-import {
-  datetime,
-  int,
-  mysqlTable,
-  text,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { getBaseProperties } from '../utils/baseProperties';
+import { accountsTable } from './accounts.db';
+import { relations } from 'drizzle-orm';
 
-export const users = mysqlTable("users", {
-  id: varchar("id", { length: 50 }).primaryKey(),
-  workOsId: text("work_os_id").notNull(),
-  createdAt: datetime("created_at").notNull(),
-  email: text("email").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  maxListItems: int("max_list_items").notNull(),
+export const usersTable = sqliteTable('users', {
+  ...getBaseProperties('user'),
+  accountId: text('accountId')
+    .notNull()
+    .references(() => accountsTable.id),
+  workOsId: text('workOsId').notNull(),
+  email: text('email').notNull(),
+  firstName: text('firstName').notNull(),
+  lastName: text('lastName').notNull(),
 });
 
-export type UserEntity = typeof users.$inferSelect;
+export const usersRelations = relations(usersTable, ({ one }) => ({
+  account: one(accountsTable, {
+    fields: [usersTable.accountId],
+    references: [accountsTable.id],
+  }),
+}));
+
+export type UserEntity = typeof usersTable.$inferSelect;

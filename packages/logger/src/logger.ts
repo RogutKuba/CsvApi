@@ -1,8 +1,8 @@
 /* eslint-disable import/no-named-as-default-member -- ok for this file */
-import winston from "winston";
-import { WinstonTransport as AxiomTransport } from "@axiomhq/winston";
-import { isProduction } from "@starter/base";
-import { env } from "./env";
+import winston from 'winston';
+import { WinstonTransport as AxiomTransport } from '@axiomhq/winston';
+// import { isProduction } from "@billing/base";
+import { env } from './env';
 
 const _logger = winston.createLogger({
   format: winston.format.json(),
@@ -13,15 +13,15 @@ const _logger = winston.createLogger({
         winston.format.simple()
       ),
     }),
-    ...(isProduction()
-      ? [
-          new AxiomTransport({
-            dataset: env.AXIOM_DATASET,
-            token: env.AXIOM_TOKEN,
-            orgId: env.AXIOM_ORG_ID,
-          }),
-        ]
-      : []),
+    // ...(isProduction()
+    //   ? [
+    //       new AxiomTransport({
+    //         dataset: env.AXIOM_DATASET,
+    //         token: env.AXIOM_TOKEN,
+    //         orgId: env.AXIOM_ORG_ID,
+    //       }),
+    //     ]
+    //   : []),
   ],
 });
 

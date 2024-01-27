@@ -20,8 +20,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@starter/marketing/*": ["./src/*"],
-      "@starter/ui/*": ["../../packages/ui/*"]
+      "@billing/marketing/*": ["./src/*"],
+      "@billing/ui/*": ["../../packages/ui/*"]
     }
   },
   "include": [

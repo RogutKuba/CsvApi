@@ -4,11 +4,11 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@starter/api-routes/*": ["./src/*"],
-      "@starter/database/*": ["../database/src/*"]
+      "@billing/api-routes/*": ["./src/*"],
+      "@billing/database/*": ["../database/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"],
-  "extends": "@starter/tsconfig/base.json",
+  "extends": "@billing/tsconfig/base.json",
   "include": [".", "../database/src/**/*.ts"]
 }

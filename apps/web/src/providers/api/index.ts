@@ -1,7 +1,7 @@
-import { RawApiClient } from "@starter/api-tools";
-import { RawLocalClient } from "@starter/web/providers/api/localClient";
-import { useToast } from "@starter/ui/src/components/use-toast";
-import { useRouter } from "next/navigation";
+import { RawApiClient } from '@billing/api-tools';
+import { RawLocalClient } from '@billing/web/providers/api/localClient';
+import { useToast } from '@billing/ui/src/components/use-toast';
+import { useRouter } from 'next/navigation';
 
 export const useLocalApiClient = () => {
   const { toast } = useToast();
@@ -11,7 +11,7 @@ export const useLocalApiClient = () => {
     const handler: ProxyHandler<T> = {
       get: function (obj, prop) {
         const value = obj[prop as keyof T];
-        if (typeof value === "function") {
+        if (typeof value === 'function') {
           return async function (...args: any[]) {
             const result = await value.apply(obj, args);
 
@@ -24,16 +24,16 @@ export const useLocalApiClient = () => {
               // OR handle error
               else {
                 toast({
-                  title: "Unkown error occurred",
+                  title: 'Unkown error occurred',
                   duration: 1000,
-                  variant: "destructive",
+                  variant: 'destructive',
                 });
               }
             }
 
             return result;
           };
-        } else if (typeof value === "object" && value !== null) {
+        } else if (typeof value === 'object' && value !== null) {
           return createProxy(value); // Recursively create a proxy for nested objects
         } else {
           return value;
@@ -55,7 +55,7 @@ export const useApiClient = () => {
     const handler: ProxyHandler<T> = {
       get: function (obj, prop) {
         const value = obj[prop as keyof T];
-        if (typeof value === "function") {
+        if (typeof value === 'function') {
           return async function (...args: any[]) {
             const result = await value.apply(obj, args);
 
@@ -71,14 +71,14 @@ export const useApiClient = () => {
                   title: result.title,
                   description: result.message,
                   duration: 1000,
-                  variant: "destructive",
+                  variant: 'destructive',
                 });
               }
             }
 
             return result;
           };
-        } else if (typeof value === "object" && value !== null) {
+        } else if (typeof value === 'object' && value !== null) {
           return createProxy(value); // Recursively create a proxy for nested objects
         } else {
           return value;

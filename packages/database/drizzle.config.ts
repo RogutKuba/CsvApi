@@ -1,13 +1,14 @@
-import type { Config } from "drizzle-kit";
-import { config } from "dotenv";
+import { defineConfig } from 'drizzle-kit';
+import { config } from 'dotenv';
 
-config({ path: ".env.local" });
+config({ path: '.env.local' });
 
-export default {
-  schema: "./src/schemas/**/*.ts",
-  out: "./src/migrations",
-  driver: "mysql2",
+export default defineConfig({
+  schema: './src/schemas/**/*.ts',
+  out: './src/migrations',
+  driver: 'turso',
   dbCredentials: {
-    uri: process.env.DATABASE_URL ?? "",
+    url: process.env.DATABASE_URL!,
+    authToken: process.env.DATABASE_AUTH_TOKEN!,
   },
-} satisfies Config;
+});

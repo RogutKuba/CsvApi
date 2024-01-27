@@ -4,9 +4,9 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@starter/base/*": ["../../packages/base/src/*"],
-      "@starter/backend-common/*": ["../../packages/backend-common/src/*"],
-      "@starter/database/*": ["../../packages/database/src/*"]
+      "@billing/base/*": ["../../packages/base/src/*"],
+      "@billing/backend-common/*": ["../../packages/backend-common/src/*"],
+      "@billing/database/*": ["../../packages/database/src/*"]
     }
   },
   "include": [
@@ -16,5 +16,5 @@
     "../../packages/base/src/**/*.ts"
   ],
   "exclude": ["node_modules"],
-  "extends": "@starter/tsconfig/base.json"
+  "extends": "@billing/tsconfig/base.json"
 }

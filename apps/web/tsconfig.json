@@ -21,8 +21,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@starter/web/*": ["./src/*"],
-      "@starter/ui/*": ["../../packages/ui/*"]
+      "@billing/web/*": ["./src/*"],
+      "@billing/ui/*": ["../../packages/ui/*"]
     }
   },
   "include": [

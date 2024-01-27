@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
     "lib": ["ES2015"],
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "paths": {
+      "@billing/base": ["../base/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "dist", "./src/migrations"],
-  "extends": "@starter/tsconfig/base.json",
-  "include": ["."]
+  "extends": "@billing/tsconfig/base.json",
+  "include": [".", "../base/src/index.ts"]
 }

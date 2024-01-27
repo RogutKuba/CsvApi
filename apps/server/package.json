@@ -1,54 +1,17 @@
 {
-  "name": "@starter/server",
-  "version": "0.0.0",
-  "private": true,
   "scripts": {
-    "start": "node --env-file=.env.local dist/index.js",
-    "build-tsup": "tsup",
-    "dev-tsup": "tsup --watch --onSuccess 'node --env-file .env.local -r source-map-support/register dist/index.js'",
-    "build": "swc src --out-dir dist --source-maps true src",
-    "dev": "swc src --out-dir dist --source-maps true src && node --env-file .env.local dist/index.js",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src/",
-    "test": "jest --detectOpenHandles"
-  },
-  "jest": {
-    "preset": "jest-presets/jest/node"
+    "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "@koa/cors": "^4.0.0",
-    "@starter/api-routes": "workspace:*",
-    "@starter/backend-common": "workspace:*",
-    "@starter/base": "workspace:*",
-    "@starter/database": "workspace:*",
-    "@starter/logger": "workspace:*",
-    "@types/koa": "^2.13.12",
-    "@types/koa-bodyparser": "^4.3.12",
-    "@types/koa__cors": "^4.0.3",
-    "body-parser": "^1.20.2",
-    "concurrently": "^8.2.2",
-    "drizzle-orm": "^0.29.1",
-    "koa": "^2.14.2",
-    "koa-bodyparser": "^4.4.1",
-    "koa-zod-router": "^2.2.0",
-    "nodemon": "^3.0.1",
-    "source-map-support": "^0.5.21",
-    "zod": "^3.22.4"
+    "@billing/backend-common": "workspace:*",
+    "@billing/api-routes": "workspace:*",
+    "@billing/logger": "workspace:*",
+    "@billing/database": "workspace:*",
+    "hono": "^3.12.6",
+    "ts-rest-hono": "^0.5.0"
   },
   "devDependencies": {
-    "@starter/eslint-config-custom": "workspace:*",
-    "@starter/tsconfig": "workspace:*",
-    "@swc/cli": "^0.1.63",
-    "@swc/core": "^1.3.101",
-    "@types/body-parser": "^1.19.2",
-    "@types/cors": "^2.8.10",
-    "@types/express": "^4.17.17",
-    "@types/morgan": "^1.9.5",
-    "@types/node": "^20.5.9",
-    "@types/supertest": "^2.0.12",
-    "jest-presets": "workspace:*",
-    "supertest": "^6.3.3",
-    "typescript": "^5.2.2"
+    "@types/bun": "^1.0.0",
+    "@ts-rest/core": "^3.33.0"
   }
 }

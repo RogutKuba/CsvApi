@@ -1,4 +1,4 @@
-import { Hero } from "@starter/marketing/components/Hero";
+import { Hero } from '@billing/marketing/components/Hero';
 
 export default function LandingPage() {
   return (
