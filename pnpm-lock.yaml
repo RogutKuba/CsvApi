@@ -264,9 +264,12 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.3.2)(zod@3.22.4)
+      '@tanstack/react-query':
+        specifier: ^5.18.0
+        version: 5.18.0(react@18.2.0)
       '@ts-rest/react-query':
         specifier: ^3.33.0
-        version: 3.33.0(@tanstack/react-query@5.17.19)(react@18.2.0)(zod@3.22.4)
+        version: 3.33.0(@tanstack/react-query@5.18.0)(react@18.2.0)(zod@3.22.4)
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
@@ -380,6 +383,9 @@ importers:
       crypto:
         specifier: ^1.0.1
         version: 1.0.1
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.10
       drizzle-orm:
         specifier: ^0.29.1
         version: 0.29.1(@libsql/client@0.4.0-pre.7)
@@ -4903,16 +4909,16 @@ packages:
       zod: 3.22.4
     dev: false
 
-  /@tanstack/query-core@5.17.19:
-    resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
+  /@tanstack/query-core@5.18.0:
+    resolution: {integrity: sha512-8c6nxeAnGHxIDZIyDmHdmgFt4D+LprAQaJmjsnM4szcIjsWOyFlzxdqQUuQ/XuQRvUgqYaqlJTtDADlSS7pTPQ==}
     dev: false
 
-  /@tanstack/react-query@5.17.19(react@18.2.0):
-    resolution: {integrity: sha512-qaQENB6/03Gj3dFZGvdmUoqeUGlGm7P1p0RmaR04Bf1Ib1T9lLGimcC9T3oCFbrx0b2ZF21ngjFZNjj9uPJMcg==}
+  /@tanstack/react-query@5.18.0(react@18.2.0):
+    resolution: {integrity: sha512-7FKxNfxxKEL7n3ADpwp81Fy4FX85hNkYVzQQVQsF0JAPl93c3d1gmNZMIbEtOqgYfom1/ontGh3FiZGYj3xyWA==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.17.19
+      '@tanstack/query-core': 5.18.0
       react: 18.2.0
     dev: false
 
@@ -4935,7 +4941,7 @@ packages:
     dependencies:
       zod: 3.22.4
 
-  /@ts-rest/react-query@3.33.0(@tanstack/react-query@5.17.19)(react@18.2.0)(zod@3.22.4):
+  /@ts-rest/react-query@3.33.0(@tanstack/react-query@5.18.0)(react@18.2.0)(zod@3.22.4):
     resolution: {integrity: sha512-lHyLmQlnVzt69ikFnQ/x6uyR5UV5nn9W8/Zp7DOVaztsO3OeVqmqzz4zdeuUl3exEt6Xah6ouFgqBRb+JvkC7w==}
     peerDependencies:
       '@tanstack/react-query': ^4.0.0 || ^5.0.0
@@ -4945,7 +4951,7 @@ packages:
       zod:
         optional: true
     dependencies:
-      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      '@tanstack/react-query': 5.18.0(react@18.2.0)
       react: 18.2.0
       zod: 3.22.4
     dev: false
@@ -6755,6 +6761,10 @@ packages:
     engines: {node: '>=0.11'}
     dependencies:
       '@babel/runtime': 7.23.5
+    dev: false
+
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: false
 
   /debug@2.6.9:

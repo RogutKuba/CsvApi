@@ -9,6 +9,9 @@ import { getBucketName, getItemKey } from './helpers/getBucketName';
 import { AccountEntity } from '@billing/database/schemas/accounts.db';
 import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
 import { getDataSchema } from './helpers/getDataSchema';
+import { requestLogsTable } from '@billing/database/schemas/requestLog.db';
+import { LimitService } from '../Limit/Limit.service';
+import { AuthResponse } from '../Auth/auth.types';
 
 export const createApiService = () => {
   const s3Client = new AwsS3Client({
@@ -21,7 +24,7 @@ export const createApiService = () => {
 
   const self = {
     createApi: async (params: {
-      account: AccountEntity;
+      account: AuthResponse['account'];
       fileToUpload: Blob;
       fieldDelimeter: string;
     }): Promise<ApiEntity> => {
@@ -35,10 +38,16 @@ export const createApiService = () => {
 
       const fileKey = generateId('file');
 
-      // TODO: parse csv and add row_idx in each row
-      // also store raw file on its own for download by user
-
       const newApi = await db.transaction(async (_) => {
+        await LimitService.assertNumberApis({
+          account,
+        });
+
+        await LimitService.updateApiCount({
+          accountId: account.id,
+          num: 1,
+        });
+
         await s3Client.putObject({
           Bucket: getBucketName(),
           Key: getItemKey([account.id, fileKey]),
@@ -148,6 +157,11 @@ export const createApiService = () => {
       }
 
       await db.transaction(async () => {
+        await LimitService.updateApiCount({
+          accountId: api.accountId,
+          num: -1,
+        });
+
         await s3Client.deleteObject({
           Bucket: getBucketName(),
           Key: getItemKey([api.accountId, api.fileKey]),
@@ -167,13 +181,25 @@ export const createApiService = () => {
 
       const api = await db.query.apisTable.findFirst({
         where: and(eq(apisTable.id, apiId), eq(apisTable.isActive, 1)),
+        with: {
+          account: {
+            with: {
+              subscriptionPlan: true,
+            },
+          },
+        },
       });
 
-      if (!api) {
+      if (!api || !api.account) {
         throw new ServerError({
           message: 'No api found!',
         });
       }
+
+      // assert request limit
+      await LimitService.assertRequests({
+        account: api.account,
+      });
 
       // construct select statements with casting based on
       const selectStatement = api.schema.reduce((prev, { field, type }) => {
@@ -197,6 +223,18 @@ export const createApiService = () => {
         sql: sqlExpression,
         type: 'query',
       });
+
+      try {
+        await db.insert(requestLogsTable).values({
+          id: generateId('requestLog'),
+          createdAt: new Date().toISOString(),
+          apiId,
+          accountId: api.accountId,
+          rawQuery: sqlExpression,
+        });
+      } catch (e) {
+        logger.error('error saving requestLog!' + e);
+      }
 
       const rawResult = await s3Client.selectObjectContent({
         Bucket: getBucketName(),
@@ -244,7 +282,7 @@ export const createApiService = () => {
       const rawResult = await s3Client.selectObjectContent({
         Bucket: getBucketName(),
         Key: getItemKey([accountId, fileKey]),
-        Expression: 'SELECT * FROM s3object s LIMIT 2;', // sqlExpression,
+        Expression: 'SELECT * FROM s3object s LIMIT 2;',
         ExpressionType: 'SQL',
         InputSerialization: {
           CSV: {

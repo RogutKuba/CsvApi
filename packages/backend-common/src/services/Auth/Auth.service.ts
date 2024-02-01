@@ -13,6 +13,8 @@ import {
   accountsTable,
 } from '@billing/database/schemas/accounts.db';
 import { createStripeService } from '../Stripe/Stripe.service';
+import { ServerError } from '@billing/backend-common/errors/serverError';
+import { subscriptionPlansTable } from '@billing/database/schemas/subscriptionPlan.db';
 
 // Get secret
 const secret = new Uint8Array(Buffer.from(env.JWT_SECRET_KEY, 'base64'));
@@ -26,25 +28,32 @@ export const AuthService = {
     const userData = await db.query.usersTable.findFirst({
       where: eq(usersTable.workOsId, workOsUser.id),
       with: {
-        account: true,
+        account: {
+          with: {
+            subscriptionPlan: true,
+          },
+        },
       },
     });
 
     if (userData) {
+      const account = userData.account;
+
+      if (account.subscriptionPlan === null) {
+        throw new ServerError({
+          message: 'User has no valid subscription plan!',
+        });
+      }
+
       return {
         user: userData,
-        account: userData.account,
+        account: account as AuthResponse['account'], // bad casting but should be valid type
       };
     }
 
     return AuthService.createNewUser(workOsUser);
   },
-  createNewUser: async (
-    workOsUser: WorkOsUser
-  ): Promise<{
-    user: UserEntity;
-    account: AccountEntity;
-  }> => {
+  createNewUser: async (workOsUser: WorkOsUser): Promise<AuthResponse> => {
     const stripeService = createStripeService();
     const accountId = generateId('account');
 
@@ -52,9 +61,11 @@ export const AuthService = {
     const newAccount: AccountEntity = {
       id: accountId,
       createdAt: new Date().toISOString(),
-      hasBucket: 0,
       stripeCustomerId: await stripeService.createStripeCustomer({ accountId }),
+      stripeProductId: 'free-plan',
       numApis: 0,
+      numRequests: 0,
+      numRequestsExpiryDate: null,
     };
 
     const newUser: UserEntity = {
@@ -67,6 +78,14 @@ export const AuthService = {
       lastName: workOsUser.lastName,
     };
 
+    const freePlan = await db.query.subscriptionPlansTable.findFirst({
+      where: eq(subscriptionPlansTable.stripeProductId, 'free-plan'),
+    });
+
+    if (!freePlan) {
+      throw new ServerError({ message: 'Cant find free plan!' });
+    }
+
     // insert into db
     await db.transaction(async (_) => {
       await db.insert(accountsTable).values(newAccount);
@@ -75,7 +94,10 @@ export const AuthService = {
 
     return {
       user: newUser,
-      account: newAccount,
+      account: {
+        ...newAccount,
+        subscriptionPlan: freePlan,
+      },
     };
   },
 };

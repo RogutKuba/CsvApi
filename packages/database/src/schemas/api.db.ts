@@ -2,6 +2,7 @@ import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { getBaseProperties } from '../utils/baseProperties';
 import { accountsTable } from './accounts.db';
 import { Id } from '@billing/base';
+import { relations } from 'drizzle-orm';
 
 export const apisTable = sqliteTable('apis', {
   ...getBaseProperties<'api'>('api'),
@@ -17,5 +18,9 @@ export const apisTable = sqliteTable('apis', {
     .$type<{ field: string; type: string }[]>(),
   fieldDelimeter: text('fieldDelimeter').notNull(),
 });
+
+export const apisRelations = relations(apisTable, ({ one }) => ({
+  account: one(accountsTable),
+}));
 
 export type ApiEntity = typeof apisTable.$inferSelect;

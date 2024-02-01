@@ -1,4 +1,5 @@
 import { AccountEntity } from '@billing/database/schemas/accounts.db';
+import { SubscriptionPlanEntity } from '@billing/database/schemas/subscriptionPlan.db';
 import { UserEntity } from '@billing/database/schemas/users.db';
 
 export interface WorkOsUser {
@@ -13,6 +14,8 @@ export interface WorkOsUser {
 }
 
 export interface AuthResponse {
-  account: AccountEntity;
+  account: AccountEntity & {
+    subscriptionPlan: SubscriptionPlanEntity;
+  };
   user: UserEntity;
 }

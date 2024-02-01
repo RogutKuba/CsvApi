@@ -1,7 +1,11 @@
 import { env } from '@billing/backend-common/env';
 import { ServerError } from '@billing/backend-common/errors/serverError';
 import Stripe from 'stripe';
-import { handlePaymentSucceeded } from './helper/handlePaymentSucceeded';
+import {
+  handleSubscriptionCreated,
+  handleSubscriptionDeleted,
+  handleSubscriptionUpdated,
+} from './helper/handleSubscriptionChange';
 import { Id } from '@billing/base';
 
 function createStripeClient() {
@@ -40,10 +44,14 @@ export const createStripeService = () => {
       })();
 
       switch (event.type) {
-        case 'payment_intent.succeeded':
-          await handlePaymentSucceeded(event);
+        case 'customer.subscription.created':
+          return await handleSubscriptionCreated(event);
+        case 'customer.subscription.updated':
+          return await handleSubscriptionUpdated(event);
+        case 'customer.subscription.deleted':
+          return await handleSubscriptionDeleted(event);
         default:
-          return;
+          return 'not-useful event';
       }
     },
   };

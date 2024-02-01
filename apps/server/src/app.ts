@@ -8,12 +8,14 @@ import { HonoEnv } from './context';
 import { authMiddleware } from './middleware/auth.middleware';
 import { errorMiddleWare } from './middleware/error.middleware';
 import { webhookApp } from './handlers/webhookHandlers';
+import { cors } from 'hono/cors';
 
 export const app = new Hono<HonoEnv>({});
 
 // Stripe handler needs to be separate becauase of body parsing issue
 app.route('/webhooks', webhookApp);
 
+app.use('*', cors());
 app.use('*', logger(customLogger.log));
 app.use('*', authMiddleware);
 app.use('*', errorMiddleWare);

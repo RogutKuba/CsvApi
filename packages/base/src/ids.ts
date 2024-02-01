@@ -10,6 +10,7 @@ export const Entities = {
   api: 'api',
   file: 'file',
   requestLog: 'req_log',
+  subscriptionPlan: 'sub_plan',
 } as const;
 
 export type EntitiesList = keyof typeof Entities;
