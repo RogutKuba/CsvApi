@@ -6,12 +6,15 @@
     "jsxImportSource": "hono/jsx",
     "paths": {
       "@billing/logger": ["../../packages/logger/src/logger.ts"],
-      "@billing/backend-common/*": ["../../packages/backend-common/src/*"]
+      "@billing/backend-common/*": ["../../packages/backend-common/src/*"],
+      "@billing/database/*": ["../../packages/database/dist/*"],
+      "@billing/api-routes": ["../../packages/api-routes/src/index.ts"]
     }
   },
   "include": [
     ".",
     "../../packages/logger/src/logger.ts",
-    "../../packages/backend-common/src/**/*.ts"
+    "../../packages/backend-common/src/**/*.ts",
+    "../../packages/api-routes/src/index.ts"
   ]
 }

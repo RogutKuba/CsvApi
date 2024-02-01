@@ -1,22 +1,21 @@
 import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { getBaseProperties } from '../utils/baseProperties';
 import { accountsTable } from './accounts.db';
-import { z } from 'zod';
+import { Id } from '@billing/base';
 
 export const apisTable = sqliteTable('apis', {
-  ...getBaseProperties('api'),
+  ...getBaseProperties<'api'>('api'),
   accountId: text('accountId')
     .notNull()
-    .references(() => accountsTable.id),
-  fileKey: text('fileKey').notNull(),
+    .references(() => accountsTable.id)
+    .$type<Id<'account'>>(),
+  fileName: text('fileName').notNull(),
+  fileKey: text('fileKey').notNull().$type<Id<'file'>>(),
   isActive: int('isActive').notNull().default(1),
+  schema: text('schema', { mode: 'json' })
+    .notNull()
+    .$type<{ field: string; type: string }[]>(),
+  fieldDelimeter: text('fieldDelimeter').notNull(),
 });
 
 export type ApiEntity = typeof apisTable.$inferSelect;
-export const ApiModel = z.object({
-  id: z.string(),
-  createdAt: z.string(),
-  accountId: z.string(),
-  fileKey: z.string(),
-  isActive: z.boolean(),
-});

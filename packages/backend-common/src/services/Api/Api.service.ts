@@ -2,12 +2,13 @@ import { S3 as AwsS3Client } from '@aws-sdk/client-s3';
 import { env } from '@billing/backend-common/env';
 import { ServerError } from '@billing/backend-common/errors/serverError';
 import { Id, generateId } from '@billing/base';
-import { db } from '@billing/database/db';
-import { AccountEntity } from '@billing/database/schemas/accounts.db';
-import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
+import { db } from '@billing/database';
 import { logger } from '@billing/logger';
 import { and, eq } from 'drizzle-orm';
-import { getBucketName } from './helpers/getBucketName';
+import { getBucketName, getItemKey } from './helpers/getBucketName';
+import { AccountEntity } from '@billing/database/schemas/accounts.db';
+import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
+import { getDataSchema } from './helpers/getDataSchema';
 
 export const createApiService = () => {
   const s3Client = new AwsS3Client({
@@ -21,53 +22,68 @@ export const createApiService = () => {
   const self = {
     createApi: async (params: {
       account: AccountEntity;
-      fileToUpload: File | Blob;
-    }) => {
-      const { account, fileToUpload } = params;
+      fileToUpload: Blob;
+      fieldDelimeter: string;
+    }): Promise<ApiEntity> => {
+      const { account, fileToUpload, fieldDelimeter } = params;
 
       logger.info({
         accountId: account.id,
-        data: fileToUpload,
+        data: fileToUpload.length,
         type: 'create',
       });
 
-      // upload file to s3, create file
-      if (account.hasBucket == 0) {
-        await s3Client.createBucket({
-          Bucket: getBucketName(account.id),
-        });
-      }
-
-      // check if bucket exists for account
       const fileKey = generateId('file');
 
-      await s3Client.putObject({
-        Bucket: getBucketName(account.id),
-        Key: fileKey,
-        Body: fileToUpload,
+      // TODO: parse csv and add row_idx in each row
+      // also store raw file on its own for download by user
+
+      const newApi = await db.transaction(async (_) => {
+        await s3Client.putObject({
+          Bucket: getBucketName(),
+          Key: getItemKey([account.id, fileKey]),
+          Body: Buffer.from(await fileToUpload.arrayBuffer()),
+        });
+
+        // fetch first two lines
+        const [headerRow, firstDataRow] = await self.queryLinesForSchema({
+          accountId: account.id,
+          fileKey,
+        });
+
+        // api->file relshp
+        const newApi: ApiEntity = {
+          id: generateId('api'),
+          createdAt: new Date().toISOString(),
+          accountId: account.id,
+          fileName: fileToUpload.name,
+          fileKey,
+          isActive: 1,
+          fieldDelimeter,
+          schema: await getDataSchema({
+            headerRow,
+            firstRow: firstDataRow,
+            fieldDelimeter,
+          }),
+        };
+
+        await db.insert(apisTable).values(newApi);
+
+        return newApi;
       });
 
-      // api->file relshp
-      const newApi: ApiEntity = {
-        id: generateId('api'),
-        createdAt: new Date().toISOString(),
-        accountId: account.id,
-        fileKey,
-        isActive: 1,
-      };
-
-      await db.insert(apisTable).values(newApi);
+      return newApi;
     },
     updateApiData: async (params: {
       account: AccountEntity;
       apiId: Id<'api'>;
-      newCsvData: string;
-    }) => {
-      const { apiId, newCsvData } = params;
+      fileToUpload: Blob;
+    }): Promise<ApiEntity> => {
+      const { apiId, fileToUpload } = params;
 
       logger.info({
         apiId,
-        data: newCsvData.length,
+        data: fileToUpload.length,
         type: 'update',
       });
 
@@ -81,28 +97,36 @@ export const createApiService = () => {
         });
       }
 
-      // remove file from csv bucket and update api->file relshp
-      await s3Client.deleteObject({
-        Bucket: getBucketName(api.accountId),
-        Key: api.fileKey,
-      });
-
       // upload new file
       const fileKey = generateId('file');
 
-      await s3Client.putObject({
-        Bucket: getBucketName(api.accountId),
-        Key: fileKey,
-        Body: Buffer.from(newCsvData),
+      await db.transaction(async () => {
+        // remove file from csv bucket and update api->file relshp
+        await s3Client.deleteObject({
+          Bucket: getBucketName(),
+          Key: getItemKey([api.accountId, api.fileKey]),
+        });
+
+        await s3Client.putObject({
+          Bucket: getBucketName(),
+          Key: getItemKey([api.accountId, fileKey]),
+          Body: Buffer.from(await fileToUpload.arrayBuffer()),
+        });
+
+        // update api entity to new file key
+        await db
+          .update(apisTable)
+          .set({
+            fileKey,
+            fileName: fileToUpload.name,
+          })
+          .where(eq(apisTable.id, api.id));
       });
 
-      // update api entity to new file key
-      await db
-        .update(apisTable)
-        .set({
-          fileKey,
-        })
-        .where(eq(apisTable.id, api.id));
+      return {
+        ...api,
+        fileKey,
+      };
     },
     deleteApi: async (params: { apiId: Id<'api'> }) => {
       // delete file and archive api
@@ -123,24 +147,22 @@ export const createApiService = () => {
         });
       }
 
-      await s3Client.deleteObject({
-        Bucket: getBucketName(api.accountId),
-        Key: api.fileKey,
-      });
+      await db.transaction(async () => {
+        await s3Client.deleteObject({
+          Bucket: getBucketName(),
+          Key: getItemKey([api.accountId, api.fileKey]),
+        });
 
-      // update api entity to inactive
-      await db
-        .update(apisTable)
-        .set({
-          isActive: 0,
-        })
-        .where(eq(apisTable.id, api.id));
+        // update api entity to inactive
+        await db
+          .update(apisTable)
+          .set({
+            isActive: 0,
+          })
+          .where(eq(apisTable.id, api.id));
+      });
     },
-    fetchData: async (params: {
-      accountId: Id<'account'>;
-      apiId: Id<'api'>;
-      queryFilters: String[];
-    }) => {
+    queryData: async (params: { apiId: Id<'api'>; queryFilters: String[] }) => {
       const { apiId, queryFilters } = params;
 
       const api = await db.query.apisTable.findFirst({
@@ -153,10 +175,21 @@ export const createApiService = () => {
         });
       }
 
-      // construct sql query
-      const sqlExpression = `SELECT * FROM S3Object WHERE ${queryFilters.join(
-        ' AND '
-      )}`;
+      // construct select statements with casting based on
+      const selectStatement = api.schema.reduce((prev, { field, type }) => {
+        console.log(field, type);
+
+        return `${prev}${
+          prev.length > 0 ? ',' : ''
+        } CAST(s."${field}" as ${type}) as "${field}"`;
+      }, '');
+
+      // construct where filters
+      const whereFilter =
+        queryFilters.length > 0 ? `WHERE ${queryFilters.join(' AND ')}` : '';
+
+      // construct final sql query
+      const sqlExpression = `SELECT ${selectStatement} FROM S3Object s ${whereFilter}`;
 
       logger.info({
         apiId,
@@ -165,22 +198,77 @@ export const createApiService = () => {
         type: 'query',
       });
 
-      const result = await s3Client.selectObjectContent({
-        Bucket: getBucketName(api.accountId),
-        Key: api.fileKey,
+      const rawResult = await s3Client.selectObjectContent({
+        Bucket: getBucketName(),
+        Key: getItemKey([api.accountId, api.fileKey]),
         Expression: sqlExpression,
         ExpressionType: 'SQL',
         InputSerialization: {
-          CSV: {},
+          CSV: {
+            FileHeaderInfo: 'USE',
+            FieldDelimiter: ',',
+          },
+          CompressionType: 'NONE',
+        },
+        OutputSerialization: {
+          JSON: {
+            RecordDelimiter: ',',
+          },
+        },
+      });
+
+      const events = rawResult.Payload!;
+      const csvData = [];
+
+      for await (const event of events) {
+        if (event.Records?.Payload) {
+          csvData.push(event.Records.Payload);
+        }
+      }
+
+      const result =
+        '[' + Buffer.concat(csvData).toString('utf-8').slice(0, -1) + ']';
+
+      try {
+        return JSON.parse(result);
+      } catch (e) {
+        return result;
+      }
+    },
+    queryLinesForSchema: async (params: {
+      accountId: Id<'account'>;
+      fileKey: Id<'file'>;
+    }) => {
+      const { accountId, fileKey } = params;
+
+      const rawResult = await s3Client.selectObjectContent({
+        Bucket: getBucketName(),
+        Key: getItemKey([accountId, fileKey]),
+        Expression: 'SELECT * FROM s3object s LIMIT 2;', // sqlExpression,
+        ExpressionType: 'SQL',
+        InputSerialization: {
+          CSV: {
+            FileHeaderInfo: 'NONE',
+          },
+          CompressionType: 'NONE',
         },
         OutputSerialization: {
           CSV: {},
         },
       });
 
-      logger.log('payload', result.Payload);
+      const events = rawResult.Payload!;
+      const csvData = [];
 
-      return result.Payload;
+      for await (const event of events) {
+        if (event.Records?.Payload) {
+          csvData.push(event.Records.Payload);
+        }
+      }
+
+      const result = Buffer.concat(csvData).toString('utf-8');
+
+      return result.split('\n');
     },
   };
 

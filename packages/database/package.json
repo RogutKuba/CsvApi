@@ -2,22 +2,12 @@
   "name": "@billing/database",
   "version": "1.0.0",
   "private": true,
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./*": {
-      "import": "./dist/*.js",
-      "require": "./dist/*.js",
-      "types": "./dist/*.d.ts"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "swc src --out-dir dist --source-maps true src",
     "build-tsup": "tsup",
-    "type-check": "tsc",
+    "type-check": "tsc --emitDeclarationOnly",
     "lint": "eslint src",
     "push-m": "drizzle-kit push:sqlite",
     "gen-m": "drizzle-kit generate:sqlite",
@@ -28,6 +18,7 @@
   "dependencies": {
     "@libsql/client": "0.4.0-pre.7",
     "@billing/base": "workspace:*",
+    "@billing/database": "workspace:*",
     "@billing/eslint-config-custom": "workspace:*",
     "@billing/tsconfig": "workspace:*",
     "dotenv": "^16.3.1",

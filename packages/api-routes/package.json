@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "tsup --watch --ignore-folder ./src/generated src",
     "build": "swc src --out-dir dist --source-maps true src",
     "build-tsup": "tsup src",
     "watch": "tsup --watch --ignore-folder ./src/generated src",
     "lint": "eslint src/",
-    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --emitDeclarationOnly",
     "test": "jest"
   },
   "dependencies": {

@@ -1,6 +1,6 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
-import { apiMethodsCntract } from './apiMethodRouter';
+import { apiMethodsContract } from './apiMethodContract';
 
 const c = initContract();
 
@@ -15,5 +15,5 @@ export const appContract = c.router({
     },
     summary: 'Health check',
   },
-  api: apiMethodsCntract,
+  api: apiMethodsContract,
 });

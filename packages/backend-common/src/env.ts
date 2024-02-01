@@ -10,6 +10,8 @@ export const env = createEnv({
     JWT_SECRET_KEY: z.string().min(1),
     WORKOS_API_KEY: z.string().min(1),
     WORKOS_CLIENT_ID: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_ENDPOINT_SECRET: z.string().min(1),
   },
   /**
    * What object holds the environment variables at runtime. This is usually

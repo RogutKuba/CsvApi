@@ -10,7 +10,15 @@ const _logger = winston.createLogger({
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.simple(),
+        winston.format.splat(),
+        winston.format.printf((info) => {
+          if (typeof info.message === 'object') {
+            info.message = JSON.stringify(info.message, null, 3);
+          }
+
+          return `${info.level}: ${info.message}`;
+        })
       ),
     }),
     // ...(isProduction()

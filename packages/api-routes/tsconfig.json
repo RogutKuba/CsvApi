@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@billing/api-routes/*": ["./src/*"],
-      "@billing/database/*": ["../database/src/*"]
-    }
+      "@billing/database/*": ["../database/dist/*"]
+    },
+    "noEmit": false
   },
   "exclude": ["node_modules", "dist"],
   "extends": "@billing/tsconfig/base.json",
-  "include": [".", "../database/src/**/*.ts"]
+  "include": ["."]
 }

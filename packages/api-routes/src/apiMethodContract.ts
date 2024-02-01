@@ -1,16 +1,16 @@
-import { ApiModel } from '@billing/database/schemas/api.db';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
+import { ApiModel } from './models/Api.model';
 
 const c = initContract();
 
-export const apiMethodsCntract = c.router({
+export const apiMethodsContract = c.router({
   createApi: {
     method: 'POST',
     path: '/api/new',
     contentType: 'multipart/form-data',
     body: z.object({
-      file: z.instanceof(File).or(z.instanceof(Blob)),
+      file: z.instanceof(Blob).or(z.instanceof(File)),
     }),
     responses: {
       200: ApiModel,
@@ -39,7 +39,7 @@ export const apiMethodsCntract = c.router({
       id: z.string(),
     }),
     body: z.object({
-      file: z.instanceof(File).or(z.instanceof(Blob)),
+      file: z.instanceof(Blob).or(z.instanceof(File)),
     }),
     responses: {
       200: ApiModel,
@@ -63,6 +63,10 @@ export const apiMethodsCntract = c.router({
     path: '/api/:id',
     pathParams: z.object({
       id: z.string(),
+    }),
+    query: z.object({
+      where: z.string().optional(),
+      raw: z.literal('true').or(z.literal('false')).optional(),
     }),
     responses: {
       200: z.any(),

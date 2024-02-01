@@ -5,17 +5,15 @@
     "baseUrl": ".",
     "paths": {
       "@billing/backend-common/*": ["./src/*"],
-      "@billing/database/*": ["../database/src/*"],
-      "@billing/base": ["../base/src/index.ts"],
-      "@billing/logger": ["../logger/src/logger.ts"]
+      "@billing/database/*": ["../database/dist/*"]
     }
   },
   "exclude": ["node_modules", "dist"],
   "extends": "@billing/tsconfig/base.json",
   "include": [
-    ".",
-    "../database/src/**/*.ts",
-    "../base/src/index.ts",
-    "../logger/src/logger.ts"
+    "."
+    // "../database/src/**/*.ts",
+    // "../base/src/index.ts",
+    // "../logger/src/logger.ts"
   ]
 }

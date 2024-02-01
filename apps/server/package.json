@@ -3,6 +3,7 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@billing/base": "workspace:*",
     "@billing/backend-common": "workspace:*",
     "@billing/api-routes": "workspace:*",
     "@billing/logger": "workspace:*",

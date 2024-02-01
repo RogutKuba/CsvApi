@@ -4,19 +4,11 @@
   "private": true,
   "main": "dist/logger.js",
   "types": "dist/logger.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/logger.js",
-      "require": "./dist/logger.js",
-      "types": "./dist/logger.d.ts"
-    }
-  },
   "scripts": {
     "build": "swc src --out-dir dist --source-maps true src",
     "build-tsup": "tsup src",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint src/",
-    "typecheck": "tsc --noEmit"
+    "type-check": "tsc --emitDeclarationOnly",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@axiomhq/winston": "1.0.0-rc.1",

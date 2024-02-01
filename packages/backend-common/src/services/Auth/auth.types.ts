@@ -1,5 +1,5 @@
-import { AccountEntity } from '@starter/database/schemas/accounts.db';
-import { UserEntity } from '@starter/database/schemas/users.db';
+import { AccountEntity } from '@billing/database/schemas/accounts.db';
+import { UserEntity } from '@billing/database/schemas/users.db';
 
 export interface WorkOsUser {
   object: 'user';

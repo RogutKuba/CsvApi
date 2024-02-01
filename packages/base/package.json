@@ -7,7 +7,7 @@
   "scripts": {
     "build": "swc src --out-dir dist --source-maps true src",
     "build-tsup": "tsup src",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --emitDeclarationOnly",
     "lint": "eslint src",
     "clean": "rm -rf dist"
   },

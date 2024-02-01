@@ -1,12 +1,14 @@
-import { type EntitiesList, generateId } from '@billing/base';
+import { type EntitiesList, generateId, Id } from '@billing/base';
 import { text } from 'drizzle-orm/sqlite-core';
 
-// <T extends keyof Entities>
-export const getBaseProperties = (obj: EntitiesList) => ({
+export const getBaseProperties = <T extends EntitiesList>(
+  obj: EntitiesList
+) => ({
   id: text('id')
     .notNull()
     .primaryKey()
-    .$defaultFn(() => generateId(obj)),
+    .$defaultFn(() => generateId(obj))
+    .$type<Id<T>>(),
   createdAt: text('createdAt')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
