@@ -8,5 +8,22 @@ export const InvalidAuthError = base.createError({
   messageData: {
     title: 'Invalid auth',
     message: 'Missing auth token or invalid auth token',
+    meta: {
+      redirect: '',
+      reason: '',
+    },
+  },
+});
+
+export const AuthCreationError = base.createError({
+  name: 'UserCreationError',
+  status: 500,
+  messageData: {
+    title: 'Error creating user',
+    message: 'Unhandled error creating user',
+    meta: {
+      redirect: '',
+      reason: '',
+    },
   },
 });

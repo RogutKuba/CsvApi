@@ -9,6 +9,7 @@ import { authMiddleware } from './middleware/auth.middleware';
 import { errorMiddleWare } from './middleware/error.middleware';
 import { webhookApp } from './handlers/webhookHandlers';
 import { cors } from 'hono/cors';
+import { HTTPException } from 'hono/http-exception';
 
 export const app = new Hono<HonoEnv>({});
 
@@ -18,6 +19,20 @@ app.route('/webhooks', webhookApp);
 app.use('*', cors());
 app.use('*', logger(customLogger.log));
 app.use('*', authMiddleware);
-app.use('*', errorMiddleWare);
+// app.use('*', errorMiddleWare);
 
-createHonoEndpoints(appContract, handlers, app);
+createHonoEndpoints(appContract, handlers, app, {
+  errorHandler: errorMiddleWare,
+});
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return err.getResponse();
+  }
+  return c.json({ message: err.message }, 500);
+});
+
+// https://honojs.dev/docs/api/hono/#not-found
+app.notFound((c) => {
+  return c.text('Custom 404 Message', 404);
+});

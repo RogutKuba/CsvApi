@@ -6,6 +6,8 @@ import { Id, generateId } from '@billing/base';
 import { ApiEntity } from '@billing/database/schemas/api.db';
 import { createApiService } from '@billing/backend-common/services/Api/Api.service';
 import { getUserSafe } from './utils/getUserSafe';
+import { db } from '@billing/database/db';
+import { HTTPException } from 'hono/http-exception';
 
 const s = initServer<HonoEnv>();
 
@@ -21,6 +23,7 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
   api: {
     // create,
     createApi: async ({ body }, ctx) => {
+      throw new HTTPException(429);
       const apiService = createApiService();
 
       const fileToUpload = body.file;
@@ -31,6 +34,7 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
         account: user.account,
         fileToUpload,
         fieldDelimeter: ', ',
+        db,
       });
 
       return {
@@ -62,10 +66,13 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
 
       const user = getUserSafe(ctx);
 
-      const api = await apiService.createApi({
-        account: user.account,
-        fileToUpload,
-        fieldDelimeter: ', ',
+      const api = await db.transaction(async (tx) => {
+        return await apiService.createApi({
+          account: user.account,
+          fileToUpload,
+          fieldDelimeter: ', ',
+          db: tx,
+        });
       });
 
       return {
@@ -79,13 +86,13 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
         body: 'removed',
       };
     },
-    queryApi: async ({ params, query }, ctx) => {
+    queryApi: async ({ params, query }) => {
       const apiService = createApiService();
-      const user = getUserSafe(ctx);
 
       const data = await apiService.queryData({
         apiId: params.id as Id<'api'>,
         queryFilters: query.where ? [query.where] : [],
+        db,
       });
 
       return {

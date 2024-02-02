@@ -8,7 +8,7 @@ export const usersTable = sqliteTable('users', {
   ...getBaseProperties<'user'>('user'),
   accountId: text('accountId')
     .notNull()
-    .references(() => accountsTable.id)
+    // .references(() => accountsTable.id)
     .$type<Id<'account'>>(),
   workOsId: text('workOsId').notNull(),
   email: text('email').notNull(),

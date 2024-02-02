@@ -2,16 +2,19 @@ import { S3 as AwsS3Client } from '@aws-sdk/client-s3';
 import { env } from '@billing/backend-common/env';
 import { ServerError } from '@billing/backend-common/errors/serverError';
 import { Id, generateId } from '@billing/base';
-import { db } from '@billing/database';
 import { logger } from '@billing/logger';
 import { and, eq } from 'drizzle-orm';
 import { getBucketName, getItemKey } from './helpers/getBucketName';
-import { AccountEntity } from '@billing/database/schemas/accounts.db';
+import {
+  AccountEntity,
+  accountsTable,
+} from '@billing/database/schemas/accounts.db';
 import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
 import { getDataSchema } from './helpers/getDataSchema';
 import { requestLogsTable } from '@billing/database/schemas/requestLog.db';
 import { LimitService } from '../Limit/Limit.service';
 import { AuthResponse } from '../Auth/auth.types';
+import { DbClient } from '@billing/database/db';
 
 export const createApiService = () => {
   const s3Client = new AwsS3Client({
@@ -27,8 +30,9 @@ export const createApiService = () => {
       account: AuthResponse['account'];
       fileToUpload: Blob;
       fieldDelimeter: string;
+      db: DbClient;
     }): Promise<ApiEntity> => {
-      const { account, fileToUpload, fieldDelimeter } = params;
+      const { account, fileToUpload, fieldDelimeter, db } = params;
 
       logger.info({
         accountId: account.id,
@@ -38,47 +42,46 @@ export const createApiService = () => {
 
       const fileKey = generateId('file');
 
-      const newApi = await db.transaction(async (_) => {
-        await LimitService.assertNumberApis({
-          account,
-        });
+      await LimitService.assertNumberApis({
+        account,
+      });
 
+      await s3Client.putObject({
+        Bucket: getBucketName(),
+        Key: getItemKey([account.id, fileKey]),
+        Body: Buffer.from(await fileToUpload.arrayBuffer()),
+      });
+
+      // fetch first two lines
+      const [headerRow, firstDataRow] = await self.queryLinesForSchema({
+        accountId: account.id,
+        fileKey,
+        db,
+      });
+
+      // api->file relshp
+      const newApi: ApiEntity = {
+        id: generateId('api'),
+        createdAt: new Date().toISOString(),
+        accountId: account.id,
+        fileName: fileToUpload.name,
+        fileKey,
+        isActive: 1,
+        fieldDelimeter,
+        schema: await getDataSchema({
+          headerRow,
+          firstRow: firstDataRow,
+          fieldDelimeter,
+        }),
+      };
+
+      await db.transaction(async (tx) => {
         await LimitService.updateApiCount({
           accountId: account.id,
           num: 1,
+          db: tx,
         });
-
-        await s3Client.putObject({
-          Bucket: getBucketName(),
-          Key: getItemKey([account.id, fileKey]),
-          Body: Buffer.from(await fileToUpload.arrayBuffer()),
-        });
-
-        // fetch first two lines
-        const [headerRow, firstDataRow] = await self.queryLinesForSchema({
-          accountId: account.id,
-          fileKey,
-        });
-
-        // api->file relshp
-        const newApi: ApiEntity = {
-          id: generateId('api'),
-          createdAt: new Date().toISOString(),
-          accountId: account.id,
-          fileName: fileToUpload.name,
-          fileKey,
-          isActive: 1,
-          fieldDelimeter,
-          schema: await getDataSchema({
-            headerRow,
-            firstRow: firstDataRow,
-            fieldDelimeter,
-          }),
-        };
-
-        await db.insert(apisTable).values(newApi);
-
-        return newApi;
+        await tx.insert(apisTable).values(newApi);
       });
 
       return newApi;
@@ -87,8 +90,9 @@ export const createApiService = () => {
       account: AccountEntity;
       apiId: Id<'api'>;
       fileToUpload: Blob;
+      db: DbClient;
     }): Promise<ApiEntity> => {
-      const { apiId, fileToUpload } = params;
+      const { apiId, fileToUpload, db } = params;
 
       logger.info({
         apiId,
@@ -109,7 +113,7 @@ export const createApiService = () => {
       // upload new file
       const fileKey = generateId('file');
 
-      await db.transaction(async () => {
+      await db.transaction(async (tx) => {
         // remove file from csv bucket and update api->file relshp
         await s3Client.deleteObject({
           Bucket: getBucketName(),
@@ -123,7 +127,7 @@ export const createApiService = () => {
         });
 
         // update api entity to new file key
-        await db
+        await tx
           .update(apisTable)
           .set({
             fileKey,
@@ -137,9 +141,9 @@ export const createApiService = () => {
         fileKey,
       };
     },
-    deleteApi: async (params: { apiId: Id<'api'> }) => {
+    deleteApi: async (params: { apiId: Id<'api'>; db: DbClient }) => {
       // delete file and archive api
-      const { apiId } = params;
+      const { apiId, db } = params;
 
       logger.info({
         apiId,
@@ -160,6 +164,7 @@ export const createApiService = () => {
         await LimitService.updateApiCount({
           accountId: api.accountId,
           num: -1,
+          db,
         });
 
         await s3Client.deleteObject({
@@ -176,8 +181,12 @@ export const createApiService = () => {
           .where(eq(apisTable.id, api.id));
       });
     },
-    queryData: async (params: { apiId: Id<'api'>; queryFilters: String[] }) => {
-      const { apiId, queryFilters } = params;
+    queryData: async (params: {
+      apiId: Id<'api'>;
+      queryFilters: String[];
+      db: DbClient;
+    }) => {
+      const { apiId, queryFilters, db } = params;
 
       const api = await db.query.apisTable.findFirst({
         where: and(eq(apisTable.id, apiId), eq(apisTable.isActive, 1)),
@@ -199,6 +208,7 @@ export const createApiService = () => {
       // assert request limit
       await LimitService.assertRequests({
         account: api.account,
+        db,
       });
 
       // construct select statements with casting based on
@@ -276,8 +286,9 @@ export const createApiService = () => {
     queryLinesForSchema: async (params: {
       accountId: Id<'account'>;
       fileKey: Id<'file'>;
+      db: DbClient;
     }) => {
-      const { accountId, fileKey } = params;
+      const { accountId, fileKey, db } = params;
 
       const rawResult = await s3Client.selectObjectContent({
         Bucket: getBucketName(),

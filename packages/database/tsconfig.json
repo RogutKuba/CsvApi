@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "noEmit": false
   },
-  "exclude": ["node_modules", "dist", "./src/migrations"],
   "extends": "@billing/tsconfig/base.json",
+  "exclude": ["node_modules", "./dist", "./src/migrations"],
   "include": ["./src"]
 }

@@ -1,7 +1,13 @@
 import { Button } from '@billing/ui/src/components/button';
-import { Card, CardHeader, CardTitle } from '@billing/ui/src/components/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@billing/ui/src/components/card';
 import { UploadIcon } from '@radix-ui/react-icons';
 import { Upload } from 'lucide-react';
+import { ApisTable } from './ApisTable';
 
 export const ApisView = () => {
   return (
@@ -15,6 +21,9 @@ export const ApisView = () => {
           </Button>
         </div>
       </CardHeader>
+      <CardContent>
+        <ApisTable />
+      </CardContent>
     </Card>
   );
 };

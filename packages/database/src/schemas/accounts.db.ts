@@ -7,10 +7,8 @@ import { subscriptionPlansTable } from './subscriptionPlan.db';
 export const accountsTable = sqliteTable('accounts', {
   ...getBaseProperties<'account'>('account'),
   stripeCustomerId: text('stripeCustomerId').default('test').notNull(),
-  stripeProductId: text('stripeSubscriptionId')
-    .default('free-plan')
-    .notNull()
-    .references(() => subscriptionPlansTable.id),
+  stripeProductId: text('stripeSubscriptionId').default('free-plan').notNull(),
+  // .references(() => subscriptionPlansTable.stripeProductId),
   numApis: int('numApis').default(0).notNull(),
   numRequests: int('numRequests').default(0).notNull(),
   numRequestsExpiryDate: text('numRequestsExpiryDate').default('').notNull(),

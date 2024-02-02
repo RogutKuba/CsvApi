@@ -30,7 +30,11 @@ export default function RootLayout({
             {/* <Sidebar /> */}
             <main className='grow flex flex-col'>{children}</main>
             <Toaster />
-            <LinearGradient />
+            <GridPattern
+              strokeDasharray={5}
+              className='-z-10 stroke-gray-200'
+            />
+            {/* <LinearGradient /> */}
           </body>
         </TooltipProvider>
       </QueryClientProvider>
