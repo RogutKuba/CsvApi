@@ -22,17 +22,7 @@ app.use('*', authMiddleware);
 // app.use('*', errorMiddleWare);
 
 createHonoEndpoints(appContract, handlers, app, {
-  errorHandler: errorMiddleWare,
+  // errorHandler: errorMiddleWare,
 });
 
-app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    return err.getResponse();
-  }
-  return c.json({ message: err.message }, 500);
-});
-
-// https://honojs.dev/docs/api/hono/#not-found
-app.notFound((c) => {
-  return c.text('Custom 404 Message', 404);
-});
+app.showRoutes();

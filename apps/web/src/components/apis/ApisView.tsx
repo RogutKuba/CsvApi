@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@billing/ui/src/components/card';
-import { UploadIcon } from '@radix-ui/react-icons';
 import { Upload } from 'lucide-react';
 import { ApisTable } from './ApisTable';
 
@@ -17,7 +16,7 @@ export const ApisView = () => {
           <CardTitle>Your APIs</CardTitle>
           <Button size='default'>
             <Upload className='mr-2 h-4 w-4' />
-            Upload
+            Upload CSV
           </Button>
         </div>
       </CardHeader>

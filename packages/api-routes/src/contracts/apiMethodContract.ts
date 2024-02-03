@@ -1,10 +1,18 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
-import { ApiModel } from './models/Api.model';
+import { ApiModel } from '../models/Api.model';
 
 const c = initContract();
 
 export const apiMethodsContract = c.router({
+  getApis: {
+    method: 'GET',
+    path: '/api',
+    responses: {
+      200: z.array(ApiModel),
+    },
+    summary: 'Returns list of apis owned by account',
+  },
   createApi: {
     method: 'POST',
     path: '/api/new',

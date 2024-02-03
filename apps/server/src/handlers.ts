@@ -3,11 +3,12 @@ import { RecursiveRouterObj, initServer } from 'ts-rest-hono';
 import { appContract } from '@billing/api-routes';
 import { HonoEnv } from './context';
 import { Id, generateId } from '@billing/base';
-import { ApiEntity } from '@billing/database/schemas/api.db';
+import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
 import { createApiService } from '@billing/backend-common/services/Api/Api.service';
 import { getUserSafe } from './utils/getUserSafe';
 import { db } from '@billing/database/db';
-import { HTTPException } from 'hono/http-exception';
+import { eq } from 'drizzle-orm';
+import { userArgs } from './handlers/userHandler';
 
 const s = initServer<HonoEnv>();
 
@@ -21,9 +22,20 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
     };
   },
   api: {
+    getApis: async (_, ctx) => {
+      const user = getUserSafe(ctx);
+
+      const apis = await db.query.apisTable.findMany({
+        where: eq(apisTable.accountId, user.accountId),
+      });
+
+      return {
+        status: 200,
+        body: apis,
+      };
+    },
     // create,
     createApi: async ({ body }, ctx) => {
-      throw new HTTPException(429);
       const apiService = createApiService();
 
       const fileToUpload = body.file;
@@ -101,6 +113,7 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
       };
     },
   },
+  user: userArgs,
 };
 
 export const handlers = s.router(appContract, args);

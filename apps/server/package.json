@@ -3,16 +3,17 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "@billing/base": "workspace:*",
-    "@billing/backend-common": "workspace:*",
     "@billing/api-routes": "workspace:*",
-    "@billing/logger": "workspace:*",
+    "@billing/backend-common": "workspace:*",
+    "@billing/base": "workspace:*",
     "@billing/database": "workspace:*",
+    "@billing/logger": "workspace:*",
+    "drizzle-orm": "^0.29.1",
     "hono": "^3.12.6",
     "ts-rest-hono": "^0.5.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.0.0",
-    "@ts-rest/core": "^3.33.0"
+    "@ts-rest/core": "^3.33.0",
+    "@types/bun": "^1.0.0"
   }
 }

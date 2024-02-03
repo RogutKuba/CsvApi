@@ -41,10 +41,9 @@ export async function GET(req: NextRequest) {
   response.cookies.set({
     name: 'x-auth-token',
     value: token,
-    path: '/',
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
+    // httpOnly: true,
+    // secure: true,
+    // sameSite: 'lax',
   });
 
   return response;

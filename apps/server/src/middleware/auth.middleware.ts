@@ -51,7 +51,6 @@ export const authMiddleware = createMiddleware(async (ctx, next) => {
         ctx.status(e.status);
 
         if (e.meta['redirect'] && e.meta['redirect'] !== '') {
-          console.log('redirect', e.meta['redirect']);
           return ctx.json({
             redirect: e.meta['redirect'],
             type: e.errorType,
