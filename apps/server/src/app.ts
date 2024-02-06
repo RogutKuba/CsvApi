@@ -10,6 +10,7 @@ import { errorMiddleWare } from './middleware/error.middleware';
 import { webhookApp } from './handlers/webhookHandlers';
 import { cors } from 'hono/cors';
 import { HTTPException } from 'hono/http-exception';
+import { ServerError } from '@billing/backend-common/errors/serverError';
 
 export const app = new Hono<HonoEnv>({});
 
@@ -22,7 +23,28 @@ app.use('*', authMiddleware);
 // app.use('*', errorMiddleWare);
 
 createHonoEndpoints(appContract, handlers, app, {
-  // errorHandler: errorMiddleWare,
+  errorHandler: errorMiddleWare,
+});
+
+app.onError((err, ctx) => {
+  ctx.status(500);
+  return ctx.json({
+    error: 'Internal Server Error',
+  });
+});
+
+app.notFound((ctx) => {
+  if (ctx.error) {
+    if (ctx.error instanceof ServerError) {
+      ctx.status(ctx.error.status);
+      return ctx.json({ message: ctx.error._message, title: ctx.error._title });
+    }
+  }
+
+  ctx.status(404);
+  return ctx.json({
+    error: 'Not Found',
+  });
 });
 
 app.showRoutes();

@@ -8,6 +8,7 @@ import { UsageView } from '../components/usage/UsageView';
 import { Button } from '@billing/ui/src/components/button';
 import { useRouter } from 'next/navigation';
 import { UpgradeView } from '../components/misc/UpgradeView';
+import { useState } from 'react';
 
 export default function Home() {
   const client = useApiClient();
@@ -15,8 +16,10 @@ export default function Home() {
   const router = useRouter();
 
   const { data, error } = client.health.useQuery(['health']);
+  const [loading, setLoading] = useState(false);
 
   const redirectToLogin = async () => {
+    setLoading(true);
     const data = await authClient.authRedirect.query();
 
     if (data.status === 302) {
@@ -29,12 +32,14 @@ export default function Home() {
   return (
     <>
       <ContentHeader>
-        <Typography.h1>Your list 123</Typography.h1>
-        <Button onClick={redirectToLogin}>Get Started</Button>
+        <Typography.h2>Your list 123</Typography.h2>
+        <Button onClick={redirectToLogin} loading={loading}>
+          Get Started
+        </Button>
       </ContentHeader>
       <AppContainer>
         <ApisView />
-        <div className='w-full flex justify-between items-center gap-4'>
+        <div className='w-full flex justify-between items-center gap-8'>
           <UsageView />
           <UpgradeView />
         </div>

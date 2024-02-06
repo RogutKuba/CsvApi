@@ -21,3 +21,5 @@ export const appContract = c.router({
 });
 
 export { authContract } from './contracts/authContract';
+
+export * from './models/rollup';

@@ -6,7 +6,7 @@ const h1 = React.forwardRef<
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h1
-    className={cn('scroll-m-20 text-2xl font-bold tracking-tight', className)}
+    className={cn('scroll-m-20 text-4xl font-bold tracking-tight', className)}
     {...props}
     ref={ref}
   >
@@ -21,7 +21,7 @@ const h2 = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <h2
     className={cn(
-      'scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0',
+      'scroll-m-20 text-3xl font-semibold tracking-tight',
       className
     )}
     {...props}

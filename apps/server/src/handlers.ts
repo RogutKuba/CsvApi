@@ -9,6 +9,8 @@ import { getUserSafe } from './utils/getUserSafe';
 import { db } from '@billing/database/db';
 import { eq } from 'drizzle-orm';
 import { userArgs } from './handlers/userHandler';
+import { HTTPException } from 'hono/http-exception';
+import { ServerError } from '@billing/backend-common/errors/serverError';
 
 const s = initServer<HonoEnv>();
 
@@ -93,6 +95,8 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
       };
     },
     deleteApi: async () => {
+      throw new ServerError({ message: '123' });
+
       return {
         status: 200,
         body: 'removed',

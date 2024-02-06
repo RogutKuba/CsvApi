@@ -60,7 +60,7 @@ export const apiMethodsContract = c.router({
     pathParams: z.object({
       id: z.string(),
     }),
-    body: z.object({}),
+    body: null,
     responses: {
       200: z.literal('removed'),
     },
