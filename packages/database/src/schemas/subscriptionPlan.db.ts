@@ -8,7 +8,7 @@ export const subscriptionPlansTable = sqliteTable(
     stripeProductId: text('stripeProductId').notNull().unique(),
     allowedApis: int('allowedApis').notNull(),
     allowedRequests: int('allowedRequests').notNull(),
-    features: text('features', { mode: 'json' }).notNull().$type<String[]>(),
+    features: text('features', { mode: 'json' }).notNull().$type<string[]>(),
   },
   (table) => {
     return {

@@ -13,5 +13,5 @@ export const ApiModel = z.object({
       type: z.string(),
     })
   ),
-  fieldDelimeter: z.string(),
+  fieldDelimeterSpace: z.number(),
 });

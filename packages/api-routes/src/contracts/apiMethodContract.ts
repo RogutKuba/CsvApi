@@ -19,6 +19,8 @@ export const apiMethodsContract = c.router({
     contentType: 'multipart/form-data',
     body: z.object({
       file: z.instanceof(Blob).or(z.instanceof(File)),
+      fileName: z.string(),
+      fieldDelimeterSpace: z.literal('true').or(z.literal('false')),
     }),
     responses: {
       200: ApiModel,
@@ -48,6 +50,8 @@ export const apiMethodsContract = c.router({
     }),
     body: z.object({
       file: z.instanceof(Blob).or(z.instanceof(File)),
+      fileName: z.string(),
+      fieldDelimeterSpace: z.literal('true').or(z.literal('false')),
     }),
     responses: {
       200: ApiModel,

@@ -15,6 +15,7 @@ export const useApiClient = () => {
     api: async (args) => {
       const authToken = Cookies.get('x-auth-token');
 
+      // try {
       // want to handle errors with toasts, as well as auto-handle redirects to login for unauthorized requests
       const result = await tsRestFetchApi({
         ...args,
@@ -40,8 +41,22 @@ export const useApiClient = () => {
         toast({
           title: errorTitle,
           description: errorMessage,
+          variant: 'destructive',
         });
       }
+
+      // if (result.status === 200) {
+      //   // toast if successful
+      //   const title = (result.body as any)?.title;
+      //   const message = (result.body as any)?.message;
+
+      //   if (title?.length > 0 && message?.length > 0) {
+      //     toast({
+      //       title,
+      //       description: message,
+      //     });
+      //   }
+      // }
 
       return result;
     },

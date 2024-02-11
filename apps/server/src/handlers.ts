@@ -7,7 +7,7 @@ import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
 import { createApiService } from '@billing/backend-common/services/Api/Api.service';
 import { getUserSafe } from './utils/getUserSafe';
 import { db } from '@billing/database/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { userArgs } from './handlers/userHandler';
 import { HTTPException } from 'hono/http-exception';
 import { ServerError } from '@billing/backend-common/errors/serverError';
@@ -28,7 +28,10 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
       const user = getUserSafe(ctx);
 
       const apis = await db.query.apisTable.findMany({
-        where: eq(apisTable.accountId, user.accountId),
+        where: and(
+          eq(apisTable.accountId, user.accountId),
+          eq(apisTable.isActive, 1)
+        ),
       });
 
       return {
@@ -46,8 +49,9 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
 
       const api = await apiService.createApi({
         account: user.account,
+        fileName: body.fileName,
         fileToUpload,
-        fieldDelimeter: ', ',
+        fieldDelimeterSpace: body.fieldDelimeterSpace === 'true' ? 1 : 0,
         db,
       });
 
@@ -65,7 +69,7 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
         fileKey: 'file_123',
         isActive: 1,
         schema: [],
-        fieldDelimeter: ', ',
+        fieldDelimeterSpace: 0,
       };
 
       return {
@@ -83,8 +87,9 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
       const api = await db.transaction(async (tx) => {
         return await apiService.createApi({
           account: user.account,
+          fileName: body.fileName,
           fileToUpload,
-          fieldDelimeter: ', ',
+          fieldDelimeterSpace: body.fieldDelimeterSpace === 'true' ? 1 : 0,
           db: tx,
         });
       });
@@ -94,8 +99,14 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
         body: api,
       };
     },
-    deleteApi: async () => {
-      throw new ServerError({ message: '123' });
+    deleteApi: async ({ params }) => {
+      // throw new ServerError({ message: '123' });
+
+      const apiService = createApiService();
+      await apiService.deleteApi({
+        apiId: params.id as Id<'api'>,
+        db,
+      });
 
       return {
         status: 200,

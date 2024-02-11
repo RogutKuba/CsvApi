@@ -4,9 +4,11 @@ import { S3DataTypes } from './S3.types';
 export const getDataSchema = async (params: {
   headerRow: string;
   firstRow: string;
-  fieldDelimeter: string;
+  fieldDelimeterSpace: number;
 }): Promise<{ field: string; type: string }[]> => {
-  const { headerRow, firstRow, fieldDelimeter } = params;
+  const { headerRow, firstRow, fieldDelimeterSpace } = params;
+
+  const fieldDelimeter = fieldDelimeterSpace === 1 ? ', ' : ',';
 
   const fields = headerRow.split(fieldDelimeter).map((i) => trimString(i));
   const rowValues = firstRow.split(fieldDelimeter).map((i) => trimString(i));

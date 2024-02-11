@@ -8,9 +8,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@billing/ui/src/components/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@billing/ui/src/components/tooltip';
 import { Typography } from '@billing/ui/src/components/typography';
+import { toast } from '@billing/ui/src/components/use-toast';
 import { useApiClient } from '@billing/web/helpers/api';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface Props {
   apiId: string;
@@ -23,15 +29,21 @@ export const DeleteDialog = ({ apiId, children }: Props) => {
 
   const apiClient = useApiClient();
 
+  const { refetch: refetchApis } = apiClient.api.getApis.useQuery(['get-apis']);
+
   const handleDelete = async () => {
     setLoading(true);
-    console.log('Delete file');
 
     const res = await apiClient.api.deleteApi.mutation({
       params: { id: apiId },
     });
 
     if (res.status === 200) {
+      toast({
+        title: 'API deleted',
+        description: 'Your API has been deleted.',
+      });
+      refetchApis();
       setOpen(false);
     }
 
@@ -40,7 +52,14 @@ export const DeleteDialog = ({ apiId, children }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{children}</DialogTrigger>
+      <Tooltip>
+        <DialogTrigger asChild>
+          <TooltipTrigger asChild>{children}</TooltipTrigger>
+        </DialogTrigger>
+        <TooltipContent>
+          <Typography.p>Delete API</Typography.p>
+        </TooltipContent>
+      </Tooltip>
       <DialogContent>
         <DialogHeader>
           <Typography.h4>Delete API</Typography.h4>

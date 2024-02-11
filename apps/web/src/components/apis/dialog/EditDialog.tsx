@@ -1,4 +1,4 @@
-export const SchemaDialog = () => {
+export const EditDialog = () => {
   return (
     <div>
       <h1>SchemaDialog</h1>

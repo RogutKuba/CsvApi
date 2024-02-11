@@ -28,7 +28,7 @@ export const RowActions = ({ api }: Props) => {
   return (
     <div className='flex justify-end gap-2'>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <Button variant='outline' size='icon'>
             <MagicWandIcon className='h-4 w-4' />
           </Button>
@@ -39,7 +39,7 @@ export const RowActions = ({ api }: Props) => {
       </Tooltip>
 
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <Button variant='outline' size='icon'>
             <Pencil1Icon className='h-4 w-4' />
           </Button>
@@ -49,17 +49,18 @@ export const RowActions = ({ api }: Props) => {
         </TooltipContent>
       </Tooltip>
 
+      {/* <Button variant='outline' size='icon'>
+          <TrashIcon className='h-4 w-4' />
+        </Button> */}
+      {/* <Tooltip>
+        <TooltipTrigger asChild>
+          
+        </TooltipTrigger>
+      </Tooltip> */}
       <DeleteDialog apiId={api.id}>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant='outline' size='icon'>
-              <TrashIcon className='h-4 w-4' />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <Typography.p>Delete API</Typography.p>
-          </TooltipContent>
-        </Tooltip>
+        <Button variant='outline' size='icon'>
+          <TrashIcon className='h-4 w-4' />
+        </Button>
       </DeleteDialog>
     </div>
   );

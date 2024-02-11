@@ -34,7 +34,7 @@ export const ReplaceDialog = ({ apiId, children }: Props) => {
 
   return (
     <Dialog>
-      <DialogTrigger>{children}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <Typography.h4>Replace file</Typography.h4>

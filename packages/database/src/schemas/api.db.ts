@@ -16,7 +16,7 @@ export const apisTable = sqliteTable('apis', {
   schema: text('schema', { mode: 'json' })
     .notNull()
     .$type<{ field: string; type: string }[]>(),
-  fieldDelimeter: text('fieldDelimeter').notNull(),
+  fieldDelimeterSpace: int('fieldDelimeterSpace').notNull(),
 });
 
 export const apisRelations = relations(apisTable, ({ one }) => ({

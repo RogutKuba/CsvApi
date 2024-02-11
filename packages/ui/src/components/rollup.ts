@@ -14,3 +14,4 @@ export * from './sheet';
 export * from './form';
 export * from './table';
 export * from './dropzone';
+export * from './checkbox';

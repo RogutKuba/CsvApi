@@ -4,16 +4,18 @@ import { Button } from './button';
 
 // Define the props expected by the Dropzone component
 interface DropzoneProps {
-  onChange: React.Dispatch<React.SetStateAction<string[]>>;
+  onChange: (files: { name: string; url: string }[]) => void;
+  maxFiles?: number;
   className?: string;
-  fileExtension?: string;
+  fileExtensions?: string[];
+  maxFileSize?: number;
 }
 
 // Create the Dropzone component receiving props
 export function Dropzone({
   onChange,
   className,
-  fileExtension,
+  fileExtensions = [],
   ...props
 }: DropzoneProps) {
   // Initialize state variables using the useState hook
@@ -45,21 +47,48 @@ export function Dropzone({
 
   // Function to handle processing of uploaded files
   const handleFiles = (files: FileList) => {
-    const uploadedFile = files[0];
-
-    // Check file extension
-    if (fileExtension && !uploadedFile.name.endsWith(`.${fileExtension}`)) {
-      setError(`Invalid file type. Expected: .${fileExtension}`);
+    if (files.length !== 1) {
+      setError(
+        `Invalid number of files. Expected: 1, Received: ${files.length}`
+      );
       return;
     }
 
-    const fileSizeInKB = Math.round(uploadedFile.size / 1024); // Convert to KB
+    const uploadedFile = files[0];
+    const uploadedFileExtension = uploadedFile.name.split('.').pop() ?? 'n/a';
 
-    const fileList = Array.from(files).map((file) => URL.createObjectURL(file));
-    onChange((prevFiles) => [...prevFiles, ...fileList]);
+    // Check file extension
+    // .&& !uploadedFile.name.endsWith(`.${fileExtension}
+    if (
+      fileExtensions.length > 0 &&
+      fileExtensions.includes(uploadedFileExtension)
+    ) {
+      setError(
+        `Invalid file type. Expected: one of ${fileExtensions
+          .map((e) => `.${e}`)
+          .join(', ')}`
+      );
+      return;
+    }
+
+    const fileSizeInMb =
+      Math.round((uploadedFile.size / (1024 * 1024)) * 100) / 100;
+
+    if (fileSizeInMb > (props.maxFileSize ?? 10)) {
+      setError(
+        `File size exceeds the maximum limit of ${props.maxFileSize ?? 10} MB`
+      );
+      return;
+    }
+
+    const fileList = Array.from(files).map((file) => ({
+      name: file.name,
+      url: URL.createObjectURL(file),
+    }));
+    onChange(fileList);
 
     // Display file information
-    setFileInfo(`Uploaded file: ${uploadedFile.name} (${fileSizeInKB} KB)`);
+    setFileInfo(`Uploaded file: ${uploadedFile.name} (${fileSizeInMb} MB)`);
     setError(null); // Reset error state
   };
 
@@ -79,6 +108,7 @@ export function Dropzone({
         className='flex flex-col items-center justify-center space-y-2 px-2 py-4 text-xs'
         onDragOver={handleDragOver}
         onDrop={handleDrop}
+        onClick={handleButtonClick}
       >
         <div className='flex items-center justify-center text-muted-foreground'>
           <span className='font-medium'>Drag Files to Upload or</span>
@@ -86,14 +116,13 @@ export function Dropzone({
             variant='ghost'
             size='sm'
             className='ml-auto flex h-8 space-x-2 px-0 pl-1 text-xs'
-            onClick={handleButtonClick}
           >
             Click Here
           </Button>
           <input
             ref={fileInputRef}
             type='file'
-            accept={`.${fileExtension}`} // Set accepted file type
+            accept={fileExtensions.length > 0 ? fileExtensions.join(', ') : ''} // Set accepted file type
             onChange={handleFileInputChange}
             className='hidden'
             multiple

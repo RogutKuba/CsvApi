@@ -28,11 +28,13 @@ export const createApiService = () => {
   const self = {
     createApi: async (params: {
       account: AuthResponse['account'];
+      fileName: string;
       fileToUpload: Blob;
-      fieldDelimeter: string;
+      fieldDelimeterSpace: number;
       db: DbClient;
     }): Promise<ApiEntity> => {
-      const { account, fileToUpload, fieldDelimeter, db } = params;
+      const { account, fileName, fileToUpload, fieldDelimeterSpace, db } =
+        params;
 
       logger.info({
         accountId: account.id,
@@ -64,14 +66,14 @@ export const createApiService = () => {
         id: generateId('api'),
         createdAt: new Date().toISOString(),
         accountId: account.id,
-        fileName: fileToUpload.name,
+        fileName,
         fileKey,
         isActive: 1,
-        fieldDelimeter,
+        fieldDelimeterSpace,
         schema: await getDataSchema({
           headerRow,
           firstRow: firstDataRow,
-          fieldDelimeter,
+          fieldDelimeterSpace,
         }),
       };
 
