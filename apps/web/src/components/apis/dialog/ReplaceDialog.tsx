@@ -13,25 +13,6 @@ interface Props {
 }
 
 export const ReplaceDialog = ({ apiId, children }: Props) => {
-  const client = useApiClient();
-
-  const handleReplace = async () => {
-    console.log('Replace file');
-
-    const res = await client.api.updateApiData.mutation({
-      params: {
-        id: '12',
-      },
-      body: {
-        file: new Blob(),
-      },
-    });
-
-    if (res.status === 200) {
-      console.log('File replaced');
-    }
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
