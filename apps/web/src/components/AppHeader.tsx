@@ -1,3 +1,4 @@
+'use client';
 import { Typography } from '@billing/ui/src/components/typography';
 import { ContentHeader } from './ContentHeader';
 import { Button } from '@billing/ui/src/components/button';
@@ -16,7 +17,7 @@ export const AppHeader = () => {
     <ContentHeader>
       <Typography.h1>CSV2API</Typography.h1>
       <div className='flex items-center gap-4'>
-        <Button onClick={redirectToBilling}>Billing</Button>
+        {/* <Button onClick={redirectToBilling}>Billing</Button> */}
         <Button variant='outline' onClick={() => authHelpers.logout()}>
           Logout
         </Button>

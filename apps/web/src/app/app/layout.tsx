@@ -24,26 +24,19 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   return (
-    <html lang='en'>
-      <Script
-        src='https://beamanalytics.b-cdn.net/beam.min.js'
-        data-token='675cad43-f0ad-4eac-918d-e29733cbbe32'
-        async
-      />
+    <div className='h-screen w-screen flex'>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <body className='h-screen w-screen flex'>
-            {/* <Sidebar /> */}
-            <main className='grow flex flex-col'>{children}</main>
-            <Toaster />
-            <GridPattern
-              strokeDasharray={5}
-              className='-z-10 stroke-gray-200 [mask-image:linear-gradient(to_bottom_right,white 50%, transparent 10% ,transparent 10%)]'
-            />
-            {/* <LinearGradient /> */}
-          </body>
+          {/* <Sidebar /> */}
+          <div className='grow flex flex-col'>{children}</div>
+          <Toaster />
+          <GridPattern
+            strokeDasharray={5}
+            className='-z-10 stroke-gray-200 [mask-image:linear-gradient(to_bottom_right,white 50%, transparent 10% ,transparent 10%)]'
+          />
+          {/* <LinearGradient /> */}
         </TooltipProvider>
       </QueryClientProvider>
-    </html>
+    </div>
   );
 }

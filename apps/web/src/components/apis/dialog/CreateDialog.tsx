@@ -101,6 +101,10 @@ export const CreateDialog = ({ children }: Props) => {
           <Typography.h4>Create API</Typography.h4>
         </DialogHeader>
 
+        <DialogDescription>
+          Creating your API may take a few seconds to upload.
+        </DialogDescription>
+
         <CreateForm form={form} />
 
         <DialogFooter>
