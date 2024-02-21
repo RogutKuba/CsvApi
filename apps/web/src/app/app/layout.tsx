@@ -5,10 +5,11 @@ import '@billing/ui/styles/global.css';
 import { Sidebar } from '@billing/web/components/sidebar/Sidebar.main';
 import { TooltipProvider } from '@billing/ui/src/components/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import GridPattern from '../components/patterns/gridPattern';
+import GridPattern from '../../components/patterns/gridPattern';
 import { cn } from '@billing/ui/src';
-import DotPattern from '../components/patterns/dotPattern';
-import LinearGradient from '../components/patterns/linearGradient';
+import DotPattern from '../../components/patterns/dotPattern';
+import LinearGradient from '../../components/patterns/linearGradient';
+import Script from 'next/script';
 
 // export const metadata: Metadata = {
 //   title: 'Starter App',
@@ -24,6 +25,11 @@ export default function RootLayout({
 
   return (
     <html lang='en'>
+      <Script
+        src='https://beamanalytics.b-cdn.net/beam.min.js'
+        data-token='675cad43-f0ad-4eac-918d-e29733cbbe32'
+        async
+      />
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <body className='h-screen w-screen flex'>

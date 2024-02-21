@@ -3,6 +3,7 @@ import { getBaseProperties } from '../utils/baseProperties';
 import { relations } from 'drizzle-orm';
 import { usersTable } from './users.db';
 import { subscriptionPlansTable } from './subscriptionPlan.db';
+import { apisTable } from './api.db';
 
 export const accountsTable = sqliteTable('accounts', {
   ...getBaseProperties<'account'>('account'),
@@ -16,6 +17,7 @@ export const accountsTable = sqliteTable('accounts', {
 
 export const accountsRelations = relations(accountsTable, ({ many, one }) => ({
   users: many(usersTable),
+  apis: many(apisTable),
   subscriptionPlan: one(subscriptionPlansTable, {
     fields: [accountsTable.stripeProductId],
     references: [subscriptionPlansTable.stripeProductId],

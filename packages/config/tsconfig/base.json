@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": false,
-    "module": "ESNext",
+    "module": "CommonJS",
   },
   "exclude": ["node_modules"]
 }

@@ -9,7 +9,7 @@ import { getUserSafe } from './utils/getUserSafe';
 import { db } from '@billing/database/db';
 import { eq, and } from 'drizzle-orm';
 import { userArgs } from './handlers/userHandler';
-import { HTTPException } from 'hono/http-exception';
+import { z } from 'zod';
 import { ServerError } from '@billing/backend-common/errors/serverError';
 
 const s = initServer<HonoEnv>();
@@ -60,7 +60,36 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
         body: api,
       };
     },
-    updateApi: async () => {
+    updateApi: async ({ body, params }, ctx) => {
+      const zodDataSchema = z.array(
+        z.object({
+          field: z.string(),
+          type: z.union([
+            z.literal('string'),
+            z.literal('int'),
+            z.literal('float'),
+            z.literal('bool'),
+          ]),
+        })
+      );
+
+      const existingApi = await db.query.apisTable.findFirst({
+        where: eq(apisTable.id, params.id as Id<'api'>),
+      });
+
+      if (!existingApi) {
+        throw new ServerError({ message: 'Api not found' });
+      }
+
+      // create new api object
+      const updatedApi: ApiEntity = {
+        ...existingApi,
+      };
+
+      const apiService = createApiService();
+
+      const fileToUpload = body.file;
+
       const newApi: ApiEntity = {
         id: generateId('api'),
         createdAt: new Date().toISOString(),
@@ -75,28 +104,6 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
       return {
         status: 200,
         body: newApi,
-      };
-    },
-    updateApiData: async ({ body }, ctx) => {
-      const apiService = createApiService();
-
-      const fileToUpload = body.file;
-
-      const user = getUserSafe(ctx);
-
-      const api = await db.transaction(async (tx) => {
-        return await apiService.createApi({
-          account: user.account,
-          fileName: body.fileName,
-          fileToUpload,
-          fieldDelimeterSpace: body.fieldDelimeterSpace === 'true' ? 1 : 0,
-          db: tx,
-        });
-      });
-
-      return {
-        status: 200,
-        body: api,
       };
     },
     deleteApi: async ({ params }) => {
@@ -116,9 +123,11 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
     queryApi: async ({ params, query }) => {
       const apiService = createApiService();
 
+      const parsedFilters = query.filters ? query.filters.split('and') : [];
+
       const data = await apiService.queryData({
         apiId: params.id as Id<'api'>,
-        queryFilters: query.where ? [query.where] : [],
+        queryFilters: query.filters ? parsedFilters : [],
         db,
       });
 
