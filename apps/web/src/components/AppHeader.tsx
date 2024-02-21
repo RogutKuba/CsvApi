@@ -15,7 +15,11 @@ export const AppHeader = () => {
 
   return (
     <ContentHeader>
-      <Typography.h1>CSV2API</Typography.h1>
+      <div className='flex items-center gap-2'>
+        <img src='/csv.svg' alt='CSVAPI' height={30} width={30} />
+        <Typography.h1>CSVAPI</Typography.h1>
+      </div>
+
       <div className='flex items-center gap-4'>
         {/* <Button onClick={redirectToBilling}>Billing</Button> */}
         <Button variant='outline' onClick={() => authHelpers.logout()}>

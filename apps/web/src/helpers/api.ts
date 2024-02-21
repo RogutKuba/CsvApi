@@ -67,7 +67,7 @@ export const useApiClient = () => {
 
 export const useAuthClient = () => {
   return initQueryClient(authContract, {
-    baseUrl: 'http://localhost:3000/api',
+    baseUrl: `${env.NEXT_PUBLIC_URL}/api`,
     baseHeaders: {},
   });
 };
