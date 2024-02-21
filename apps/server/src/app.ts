@@ -9,7 +9,6 @@ import { authMiddleware } from './middleware/auth.middleware';
 import { errorMiddleWare } from './middleware/error.middleware';
 import { webhookApp } from './handlers/webhookHandlers';
 import { cors } from 'hono/cors';
-import { HTTPException } from 'hono/http-exception';
 import { ServerError } from '@billing/backend-common/errors/serverError';
 
 export const app = new Hono<HonoEnv>({});
@@ -27,6 +26,8 @@ createHonoEndpoints(appContract, handlers, app, {
 });
 
 app.onError((err, ctx) => {
+  console.error('error 123', err);
+
   ctx.status(500);
   return ctx.json({
     error: 'Internal Server Error',

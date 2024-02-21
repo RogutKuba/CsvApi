@@ -28,7 +28,7 @@ export const UsageView = () => {
               / {usageData?.subscriptionPlan.allowedApis}
             </p>
           </div>
-          <p className='text-xs text-muted-foreground'>
+          <p className='text-xs text-muted-foreground opacity-0'>
             Since {dayjs().format('DD/MM/YYYY')}
           </p>
         </CardContent>

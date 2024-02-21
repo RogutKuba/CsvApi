@@ -1,14 +1,10 @@
-'use client';
 import type { Metadata } from 'next';
 import { Toaster } from '@billing/ui/src/components/toaster';
 import '@billing/ui/styles/global.css';
 import { Sidebar } from '@billing/web/components/sidebar/Sidebar.main';
 import { TooltipProvider } from '@billing/ui/src/components/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import GridPattern from '../components/patterns/gridPattern';
-import { cn } from '@billing/ui/src';
-import DotPattern from '../components/patterns/dotPattern';
-import LinearGradient from '../components/patterns/linearGradient';
+import Script from 'next/script';
 
 // export const metadata: Metadata = {
 //   title: 'Starter App',
@@ -20,24 +16,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const queryClient = new QueryClient();
-
   return (
     <html lang='en'>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <body className='h-screen w-screen flex'>
-            {/* <Sidebar /> */}
-            <main className='grow flex flex-col'>{children}</main>
-            <Toaster />
-            <GridPattern
-              strokeDasharray={5}
-              className='-z-10 stroke-gray-200 [mask-image:linear-gradient(to_bottom_right,white 50%, transparent 10% ,transparent 10%)]'
-            />
-            {/* <LinearGradient /> */}
-          </body>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <Script
+        src='https://beamanalytics.b-cdn.net/beam.min.js'
+        data-token='675cad43-f0ad-4eac-918d-e29733cbbe32'
+        async
+      />
+      <body className='h-screen w-screen flex'>
+        <main className='grow flex flex-col'>{children}</main>
+      </body>
     </html>
   );
 }

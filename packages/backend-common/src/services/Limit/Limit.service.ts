@@ -45,7 +45,7 @@ export const LimitService = {
     const { account, db } = params;
 
     const curNum = account.numRequests;
-    const limit = account.subscriptionPlan.allowedApis;
+    const limit = account.subscriptionPlan.allowedRequests;
     const expiryDate = dayjs(account.numRequestsExpiryDate);
 
     // error out fast if over limit and expiry date is in future

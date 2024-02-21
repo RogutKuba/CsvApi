@@ -1,11 +1,12 @@
 import { ServerError } from '@billing/backend-common/errors/serverError';
 import { S3DataTypes } from './S3.types';
+import { FieldDataType } from '@billing/database/schemas/api.db';
 
 export const getDataSchema = async (params: {
   headerRow: string;
   firstRow: string;
   fieldDelimeterSpace: number;
-}): Promise<{ field: string; type: string }[]> => {
+}): Promise<{ field: string; type: FieldDataType }[]> => {
   const { headerRow, firstRow, fieldDelimeterSpace } = params;
 
   const fieldDelimeter = fieldDelimeterSpace === 1 ? ', ' : ',';
@@ -44,7 +45,7 @@ const isInt = (value: string): boolean => {
   return /^\d+$/.test(value);
 };
 
-const getFieldType = (value: string): S3DataTypes => {
+export const getFieldType = (value: string): S3DataTypes => {
   if (value === 'true' || value === 'false') {
     return 'bool';
   }

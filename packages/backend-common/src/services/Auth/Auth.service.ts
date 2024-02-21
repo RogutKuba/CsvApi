@@ -116,6 +116,14 @@ export const AuthService = {
         },
       };
     } catch (e: unknown) {
+      // check if it was duplicate key error by refetching
+      const refetch = await db.query.usersTable.findFirst({
+        where: eq(usersTable.workOsId, workOsUser.id),
+      });
+      if (refetch) {
+        return AuthService.createOrGetUser({ workOsUser, db });
+      }
+
       logger.error('error', e);
       throw new AuthCreationError({
         redirect: '',

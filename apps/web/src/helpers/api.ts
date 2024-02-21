@@ -26,7 +26,7 @@ export const useApiClient = () => {
       });
 
       if (result.status === 401) {
-        const redirectPath = (result.body as any)?.redirect ?? '/login';
+        const redirectPath = (result.body as any)?.redirect ?? '/app/login';
         router.push(redirectPath);
       }
 

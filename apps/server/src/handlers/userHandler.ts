@@ -16,7 +16,7 @@ export const userArgs: RecursiveRouterObj<
       body: {
         user: userData,
         account: userData.account,
-        subscriptionPlan: userData.account.subscriptionPlan,
+        subscriptionPlan: userData?.account?.subscriptionPlan,
       },
     };
   },

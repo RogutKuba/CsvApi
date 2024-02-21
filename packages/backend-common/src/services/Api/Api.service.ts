@@ -10,7 +10,7 @@ import {
   accountsTable,
 } from '@billing/database/schemas/accounts.db';
 import { ApiEntity, apisTable } from '@billing/database/schemas/api.db';
-import { getDataSchema } from './helpers/getDataSchema';
+import { getDataSchema, getFieldType } from './helpers/getDataSchema';
 import { requestLogsTable } from '@billing/database/schemas/requestLog.db';
 import { LimitService } from '../Limit/Limit.service';
 import { AuthResponse } from '../Auth/auth.types';
@@ -215,16 +215,32 @@ export const createApiService = () => {
 
       // construct select statements with casting based on
       const selectStatement = api.schema.reduce((prev, { field, type }) => {
-        console.log(field, type);
-
         return `${prev}${
           prev.length > 0 ? ',' : ''
         } CAST(s."${field}" as ${type}) as "${field}"`;
       }, '');
 
       // construct where filters
-      const whereFilter =
-        queryFilters.length > 0 ? `WHERE ${queryFilters.join(' AND ')}` : '';
+      const whereFilter = (() => {
+        // split filters into field, operator, value with regex
+        const regex = /(\w+)(>|>=|<|<=|=)(\w+)/;
+
+        return queryFilters.map((rawFilter) => {
+          const matches = rawFilter.match(regex);
+
+          if (!matches) {
+            return '';
+          } else {
+            const [_, field, operator, value] = matches;
+
+            const dataType = getFieldType(value);
+
+            return `WHERE CAST(s."${field}" as ${dataType}) ${operator} ${
+              dataType !== 'string' ? value : `'${value}'`
+            }`;
+          }
+        });
+      })();
 
       // construct final sql query
       const sqlExpression = `SELECT ${selectStatement} FROM S3Object s ${whereFilter}`;

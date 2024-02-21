@@ -29,29 +29,16 @@ export const apiMethodsContract = c.router({
   },
   updateApi: {
     method: 'PATCH',
-    path: '/api/:id',
-    pathParams: z.object({
-      id: z.string(),
-    }),
-    body: z.object({
-      name: z.string(),
-    }),
-    responses: {
-      200: ApiModel,
-    },
-    summary: 'Update api metadata',
-  },
-  updateApiData: {
-    method: 'PATCH',
     path: '/api/:id/data',
     contentType: 'multipart/form-data',
     pathParams: z.object({
       id: z.string(),
     }),
     body: z.object({
-      file: z.instanceof(Blob).or(z.instanceof(File)),
-      fileName: z.string(),
-      fieldDelimeterSpace: z.literal('true').or(z.literal('false')),
+      file: z.instanceof(Blob).or(z.instanceof(File)).optional(),
+      fileName: z.string().optional(),
+      fieldDelimeterSpace: z.literal('true').or(z.literal('false')).optional(),
+      dataSchema: z.string().optional(),
     }),
     responses: {
       200: ApiModel,
@@ -77,7 +64,8 @@ export const apiMethodsContract = c.router({
       id: z.string(),
     }),
     query: z.object({
-      where: z.string().optional(),
+      filters: z.string().optional(),
+      limit: z.string().optional(),
       raw: z.literal('true').or(z.literal('false')).optional(),
     }),
     responses: {

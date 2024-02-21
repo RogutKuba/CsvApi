@@ -4,7 +4,6 @@ import { InvalidAuthError } from '@billing/backend-common/services/Auth/auth.err
 import { db } from '@billing/database/db';
 import { logger } from '@billing/logger';
 import { createMiddleware } from 'hono/factory';
-import { HTTPException } from 'hono/http-exception';
 
 const UNAUTHED_ROUTES = ['/health', '/stripe-webhooks', '/error'];
 
@@ -20,7 +19,7 @@ export const authMiddleware = createMiddleware(async (ctx, next) => {
         logger.error('No auth token found');
         throw new InvalidAuthError({
           reason: 'no-token-found',
-          redirect: '/login',
+          redirect: '/app/login',
         });
       }
       const authToken = authTokenRaw.replace('Bearer ', '');
@@ -32,7 +31,7 @@ export const authMiddleware = createMiddleware(async (ctx, next) => {
         } catch {
           throw new InvalidAuthError({
             reason: 'invalid-jwt',
-            redirect: '/login',
+            redirect: '/app/login',
           });
         }
       })();

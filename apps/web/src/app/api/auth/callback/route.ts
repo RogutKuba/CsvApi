@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   // Cleanup params and redirect to homepage
   const url = req.nextUrl.clone();
   url.searchParams.delete('code');
-  url.pathname = '/';
+  url.pathname = '/app';
 
   const response = NextResponse.redirect(url);
 
@@ -34,8 +34,6 @@ export async function GET(req: NextRequest) {
     .setIssuedAt()
     .setExpirationTime('24h')
     .sign(secret);
-
-  console.log('token', token);
 
   // Store in a cookie
   response.cookies.set({

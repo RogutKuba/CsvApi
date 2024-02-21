@@ -16,12 +16,23 @@ import { useApiClient } from '@billing/web/helpers/api';
 import { ComponentNoneIcon, CopyIcon } from '@radix-ui/react-icons';
 import { RowActions } from './RowActions';
 import { Button } from '@billing/ui/src/components/button';
+import { useToast } from '@billing/ui/src/components/use-toast';
+import { env } from '@billing/web/env.mjs';
 
 export const ApisTable = () => {
   const client = useApiClient();
+  const { toast } = useToast();
 
   const { data, error, isLoading } = client.api.getApis.useQuery(['get-apis']);
   const apiItems = data?.status === 200 ? data.body : [];
+
+  const copyText = (entryText) => {
+    navigator.clipboard.writeText(entryText);
+    toast({
+      title: 'Copied',
+      description: 'Copied to clipboard',
+    });
+  };
 
   return (
     <>
@@ -45,7 +56,10 @@ export const ApisTable = () => {
               <TableRow key={api.id}>
                 <TableCell>{api.fileName}</TableCell>
                 <TableCell>
-                  <div className='flex items-center'>
+                  <div
+                    className='flex items-center'
+                    onClick={() => copyText(formatIdToUrl(api.id))}
+                  >
                     <Typography.p className='text-blue-500 hover:underline cursor-pointer'>
                       {formatIdToUrl(api.id)}
                     </Typography.p>
@@ -87,5 +101,5 @@ export const ApisTable = () => {
 };
 
 const formatIdToUrl = (id: string) => {
-  return `https://example.com/${id}`;
+  return `${env.NEXT_PUBLIC_API_URL}/api/${id}`;
 };

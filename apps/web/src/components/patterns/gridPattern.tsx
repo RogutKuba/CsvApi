@@ -1,3 +1,4 @@
+'use client';
 import { cn } from '@billing/ui/src';
 import { useId } from 'react';
 
