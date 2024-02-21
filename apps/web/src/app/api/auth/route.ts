@@ -10,7 +10,7 @@ export function GET() {
     // Specify that we'd like AuthKit to handle the authentication flow
     provider: 'authkit',
     // The callback URI AuthKit will redirect to after authentication
-    redirectUri: 'http://localhost:3000/api/auth/callback',
+    redirectUri: `${env.NEXT_PUBLIC_URL}/api/auth/callback`,
     clientId,
   });
 
