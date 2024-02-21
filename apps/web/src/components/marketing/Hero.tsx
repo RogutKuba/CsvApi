@@ -1,6 +1,4 @@
-import { cn } from '@billing/ui/src';
-import { Button, buttonVariants } from '@billing/ui/src/components/button';
-import Link from 'next/link';
+import { SignupButton } from './SignupButton';
 
 export const Hero = () => {
   return (
@@ -14,7 +12,7 @@ export const Hero = () => {
           team or the world.
         </p>
 
-        <Button size='lg'>Get started for free now</Button>
+        <SignupButton size='lg' text='Get started for free now' />
       </div>
     </section>
   );
