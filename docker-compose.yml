@@ -1,0 +1,11 @@
+version: '1'
+
+services:
+  server:
+    container_name: server
+    build:
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    restart: always
+    ports:
+      - 8000

@@ -1,6 +1,8 @@
 {
+  "name": "@billing/server",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts"
   },
   "dependencies": {
     "@billing/api-routes": "workspace:*",
