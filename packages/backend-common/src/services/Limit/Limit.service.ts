@@ -99,7 +99,8 @@ export const LimitService = {
 
     await db
       .update(accountsTable)
-      .set({ numRequests: logCount, numRequestsExpiryDate: monthEndDate });
+      .set({ numRequests: logCount, numRequestsExpiryDate: monthEndDate })
+      .where(eq(accountsTable.id, account.id));
   },
   updateApiCount: async (params: {
     accountId: Id<'account'>;
