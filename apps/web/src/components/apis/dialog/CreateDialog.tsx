@@ -42,7 +42,7 @@ export const CreateDialog = ({ children }: Props) => {
   const form = useForm<z.infer<typeof CreateFormSchema>>({
     resolver: zodResolver(CreateFormSchema),
     defaultValues: {
-      fieldDelimeterSpace: true,
+      fieldDelimeterSpace: false,
       file: [],
     },
   });

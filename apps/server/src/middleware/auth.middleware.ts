@@ -5,10 +5,39 @@ import { db } from '@billing/database/db';
 import { logger } from '@billing/logger';
 import { createMiddleware } from 'hono/factory';
 
-const UNAUTHED_ROUTES = ['/health', '/stripe-webhooks', '/error'];
+// const UNAUTHED_ROUTES = ['/health', '/stripe-webhooks', '/error', '/api'];
+
+const UNAUTHED_ROUTES = [
+  {
+    path: '/health',
+    method: 'GET',
+  },
+  {
+    path: '/stripe-webhooks',
+    method: 'POST',
+  },
+  {
+    path: '/error',
+    method: 'GET',
+  },
+  {
+    path: '/api/:id',
+    method: 'GET',
+  },
+];
 
 export const authMiddleware = createMiddleware(async (ctx, next) => {
-  if (UNAUTHED_ROUTES.includes(ctx.req.path)) {
+  const matchedRoutePath =
+    ctx.req.matchedRoutes.find((route) => route.path !== '/*')?.path ??
+    ctx.req.routePath;
+
+  const unauthedRouteMatch =
+    UNAUTHED_ROUTES.find(
+      (route) =>
+        route.path === matchedRoutePath && route.method === ctx.req.method
+    ) !== undefined;
+
+  if (unauthedRouteMatch) {
     await next();
   } else {
     // check if the user is authenticated and cookie exists

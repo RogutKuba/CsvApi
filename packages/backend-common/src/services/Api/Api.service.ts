@@ -221,7 +221,7 @@ export const createApiService = () => {
       }, '');
 
       // construct where filters
-      const whereFilter = (() => {
+      const whereFilters = (() => {
         // split filters into field, operator, value with regex
         const regex = /(\w+)(>|>=|<|<=|=)(\w+)/;
 
@@ -235,12 +235,15 @@ export const createApiService = () => {
 
             const dataType = getFieldType(value);
 
-            return `WHERE CAST(s."${field}" as ${dataType}) ${operator} ${
+            return `CAST(s."${field}" as ${dataType}) ${operator} ${
               dataType !== 'string' ? value : `'${value}'`
             }`;
           }
         });
       })();
+
+      const whereFilter =
+        whereFilters.length > 0 ? `WHERE ${whereFilters.join(' AND ')}` : '';
 
       // construct final sql query
       const sqlExpression = `SELECT ${selectStatement} FROM S3Object s ${whereFilter}`;
