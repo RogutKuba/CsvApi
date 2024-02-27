@@ -20,7 +20,7 @@ export default function RootLayout({
         async
       />
       <body className='h-screen w-screen flex'>
-        <main className='grow flex flex-col'>{children}</main>
+        <main className='h-screen w-screen grow flex flex-col'>{children}</main>
       </body>
     </html>
   );

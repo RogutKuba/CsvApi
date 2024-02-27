@@ -5,7 +5,7 @@ import GridPattern from '../components/patterns/gridPattern';
 
 export default function LandingPage() {
   return (
-    <div className='relative'>
+    <div className='relative w-screen'>
       <MarketingHeader />
       <Hero />
       <Features />
