@@ -38,12 +38,9 @@ export const MarketingHeader = () => {
       <div className='block sm:hidden'>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant='ghost' size='icon'>
-              <HamburgerMenuIcon className='h-6 w-6' />
-            </Button>
+            <HamburgerMenuIcon className='h-6 w-6 mr-2' />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            {/* <DropdownMenuLabel>Get Started</DropdownMenuLabel> */}
             <SignupLink />
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={scrollToFeatures}>
