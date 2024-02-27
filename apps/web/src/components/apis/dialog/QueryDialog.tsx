@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from '@billing/ui/src/components/dialog';
 import { Typography } from '@billing/ui/src/components/typography';
-import { set, z } from 'zod';
+import { z } from 'zod';
 import {
   Tooltip,
   TooltipContent,
@@ -19,12 +19,7 @@ import { useState } from 'react';
 import { QueryResult } from './QueryResult';
 import { env } from '@billing/web/env.mjs';
 import Cookies from 'js-cookie';
-import {
-  ClipboardCopyIcon,
-  CopyIcon,
-  PlusCircledIcon,
-  TrashIcon,
-} from '@radix-ui/react-icons';
+import { CopyIcon, PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
 import { Input } from '@billing/ui/src/components/input';
 import {
   Select,
@@ -34,6 +29,7 @@ import {
   SelectValue,
 } from '@billing/ui/src/components/select';
 import { useToast } from '@billing/ui/src/components/use-toast';
+import { Label } from '@billing/ui/src/components/label';
 
 interface Props {
   api: z.infer<typeof ApiModel>;
@@ -134,105 +130,129 @@ interface QueryFiltersProps {
 }
 
 const QueryFilters = ({ apiId, setUrl }: QueryFiltersProps) => {
-  const { toast } = useToast();
-
   const [filters, setFilters] = useState<
     {
       field: string;
-      operator: '>' | '>=' | '<' | '<=' | '=';
+      operator: '>' | '>=' | '<' | '<=' | '=' | '!=';
       value: string;
     }[]
   >([]);
   const [field, setField] = useState('');
-  const [operator, setOperator] = useState<'>' | '>=' | '<' | '<=' | '='>('=');
+  const [operator, setOperator] = useState<
+    '>' | '>=' | '<' | '<=' | '=' | '!='
+  >('=');
+  const [joinop, setJoinOp] = useState<'AND' | 'OR'>('AND');
   const [value, setValue] = useState('');
 
   const handleAddFilter = () => {
     const newFilters = [...filters, { field, operator, value }];
-    setFilters(newFilters);
-
-    // add filters to where param in url
-    const url = `${env.NEXT_PUBLIC_API_URL}/api/${apiId}`;
-    const param =
-      newFilters.length > 0
-        ? `?filters=${newFilters
-            .map((f) => `${f.field}${f.operator}${f.value}`)
-            .join('and')}`
-        : '';
-    setUrl(url + param);
+    handleUpdateFilters(newFilters, joinop);
   };
 
   const handleRemoveFilter = (index: number) => {
     const newFilters = [...filters];
     newFilters.splice(index, 1);
 
+    handleUpdateFilters(newFilters, joinop);
+  };
+
+  const handleUpdateFilters = (
+    newFilters: {
+      field: string;
+      operator: '>' | '>=' | '<' | '<=' | '=' | '!=';
+      value: string;
+    }[],
+    joinOp: 'AND' | 'OR'
+  ) => {
     setFilters(newFilters);
 
     // add filters to where param in url
     const url = `${env.NEXT_PUBLIC_API_URL}/api/${apiId}`;
-
     const param =
       newFilters.length > 0
         ? `?filters=${newFilters
             .map((f) => `${f.field}${f.operator}${f.value}`)
-            .join('and')}`
+            .join(joinop === 'AND' ? '&' : '|')}`
         : '';
     setUrl(url + param);
   };
 
-  return (
-    <div className='flex flex-col gap-2 max-h-[15vh] overflow-y-scroll'>
-      <div className='flex flex-col '>
-        {filters.map((filter, index) => (
-          <div key={index} className='flex gap-2 items-center'>
-            <Typography.p>{filter.field}</Typography.p>
-            <Typography.p>{filter.operator}</Typography.p>
-            <Typography.p>{filter.value}</Typography.p>
-            <Button
-              variant='ghost'
-              size='icon'
-              onClick={() => handleRemoveFilter(index)}
-            >
-              <TrashIcon className='h-4 w-4' />
-            </Button>
-          </div>
-        ))}
-      </div>
+  const handleChangeJoinOp = (op: string) => {
+    setJoinOp(op as 'AND' | 'OR');
 
-      <div className='flex gap-2'>
-        <Input
-          type='text'
-          placeholder='Field name'
-          className='w-[120px]'
-          onChange={(e) => setField(e.target.value)}
-        />
-        <Select value={operator} onValueChange={(v) => setOperator(v as any)}>
-          <SelectTrigger className='w-[70px]'>
-            <SelectValue placeholder='Select a datatype' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='<'>{'<'}</SelectItem>
-            <SelectItem value='<='>{'<='}</SelectItem>
-            <SelectItem value='='>{'='}</SelectItem>
-            <SelectItem value='>='>{'>='}</SelectItem>
-            <SelectItem value='>'>{'>'}</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input
-          type='text'
-          placeholder='Value'
-          className='w-[120px]'
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Button
-          variant='outline'
-          size='icon'
-          onClick={handleAddFilter}
-          disabled={field.length === 0 || value.length === 0}
-        >
-          <PlusCircledIcon className='h-4 w-4' />
-        </Button>
+    // add filters to where param in url
+    handleUpdateFilters([...filters], op as 'AND' | 'OR');
+  };
+  return (
+    <div>
+      <div className='flex flex-col gap-2 max-h-[15vh] overflow-y-scroll p-1'>
+        <div className='flex flex-col'>
+          {filters.map((filter, index) => (
+            <div key={index} className='flex gap-2 items-center'>
+              <Typography.p>{filter.field}</Typography.p>
+              <Typography.p>{filter.operator}</Typography.p>
+              <Typography.p>{filter.value}</Typography.p>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => handleRemoveFilter(index)}
+              >
+                <TrashIcon className='h-4 w-4' />
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <div className='flex gap-2'>
+          <Input
+            type='text'
+            placeholder='Field name'
+            className='w-[120px]'
+            onChange={(e) => setField(e.target.value)}
+          />
+          <Select value={operator} onValueChange={(v) => setOperator(v as any)}>
+            <SelectTrigger className='w-[70px]'>
+              <SelectValue placeholder='Select a datatype' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='<'>{'<'}</SelectItem>
+              <SelectItem value='<='>{'<='}</SelectItem>
+              <SelectItem value='='>{'='}</SelectItem>
+              <SelectItem value='>='>{'>='}</SelectItem>
+              <SelectItem value='>'>{'>'}</SelectItem>
+              <SelectItem value='!='>{'!='}</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input
+            type='text'
+            placeholder='Value'
+            className='w-[120px]'
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Button
+            variant='outline'
+            size='icon'
+            onClick={handleAddFilter}
+            disabled={field.length === 0 || value.length === 0}
+          >
+            <PlusCircledIcon className='h-4 w-4' />
+          </Button>
+        </div>
       </div>
+      {filters.length > 1 ? (
+        <div className='space-y-2 mt-2 px-1'>
+          <Label>Filter Operator</Label>
+          <Select value={joinop} onValueChange={handleChangeJoinOp}>
+            <SelectTrigger className='w-[70px]'>
+              <SelectValue placeholder='Select operator' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='AND'>{'AND'}</SelectItem>
+              <SelectItem value='OR'>{'OR'}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      ) : null}
     </div>
   );
 };

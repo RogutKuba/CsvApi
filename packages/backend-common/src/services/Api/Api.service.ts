@@ -185,10 +185,10 @@ export const createApiService = () => {
     },
     queryData: async (params: {
       apiId: Id<'api'>;
-      queryFilters: String[];
+      filterParam: String | undefined;
       db: DbClient;
     }) => {
-      const { apiId, queryFilters, db } = params;
+      const { apiId, filterParam, db } = params;
 
       const api = await db.query.apisTable.findFirst({
         where: and(eq(apisTable.id, apiId), eq(apisTable.isActive, 1)),
@@ -223,27 +223,34 @@ export const createApiService = () => {
       // construct where filters
       const whereFilters = (() => {
         // split filters into field, operator, value with regex
-        const regex = /(\w+)(>|>=|<|<=|=)(\w+)/;
+        if (!filterParam) {
+          return [];
+        }
 
-        return queryFilters.map((rawFilter) => {
-          const matches = rawFilter.match(regex);
+        const paramsRegex = /([\w@#$&()\-\d]+)(>|>=|<|<=|=)(\d+)([&|])?/g;
+        const filterRegex = /([\w@#$&()\-\d]+)(>|>=|<|<=|=|!=)(\w+)([&|])?$/;
+
+        const filterMatches = filterParam.match(paramsRegex) ?? [];
+
+        return filterMatches.map((rawFilter) => {
+          const matches = rawFilter.match(filterRegex);
 
           if (!matches) {
             return '';
           } else {
-            const [_, field, operator, value] = matches;
+            const [_, field, operator, value, separator] = matches;
 
             const dataType = getFieldType(value);
 
             return `CAST(s."${field}" as ${dataType}) ${operator} ${
               dataType !== 'string' ? value : `'${value}'`
-            }`;
+            }${separator === '&' ? ' AND' : separator === '|' ? ' OR' : ''}`;
           }
         });
       })();
 
       const whereFilter =
-        whereFilters.length > 0 ? `WHERE ${whereFilters.join(' AND ')}` : '';
+        whereFilters.length > 0 ? `WHERE ${whereFilters.join(' ')}` : '';
 
       // construct final sql query
       const sqlExpression = `SELECT ${selectStatement} FROM S3Object s ${whereFilter}`;

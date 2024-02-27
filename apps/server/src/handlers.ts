@@ -123,11 +123,9 @@ const args: RecursiveRouterObj<typeof appContract, HonoEnv> = {
     queryApi: async ({ params, query }) => {
       const apiService = createApiService();
 
-      const parsedFilters = query.filters ? query.filters.split('and') : [];
-
       const data = await apiService.queryData({
         apiId: params.id as Id<'api'>,
-        queryFilters: query.filters ? parsedFilters : [],
+        filterParam: query.filters,
         db,
       });
 

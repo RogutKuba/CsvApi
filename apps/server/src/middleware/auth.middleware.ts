@@ -24,12 +24,16 @@ const UNAUTHED_ROUTES = [
     path: '/api/:id',
     method: 'GET',
   },
+  {
+    path: '/favicon.ico',
+    method: 'GET',
+  },
 ];
 
 export const authMiddleware = createMiddleware(async (ctx, next) => {
   const matchedRoutePath =
     ctx.req.matchedRoutes.find((route) => route.path !== '/*')?.path ??
-    ctx.req.routePath;
+    ctx.req.path;
 
   const unauthedRouteMatch =
     UNAUTHED_ROUTES.find(
