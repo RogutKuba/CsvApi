@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '@billing/ui/styles/global.css';
 import Script from 'next/script';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'CSV to API',
@@ -21,6 +22,7 @@ export default function RootLayout({
       />
       <body className='h-screen w-screen flex'>
         <main className='h-screen w-screen grow flex flex-col'>{children}</main>
+        <SpeedInsights />
       </body>
     </html>
   );
