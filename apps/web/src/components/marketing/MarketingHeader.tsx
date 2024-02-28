@@ -27,7 +27,7 @@ export const MarketingHeader = () => {
         <Typography.h1>CSVAPI</Typography.h1>
       </div>
 
-      <div className='flex items-center gap-4 hidden sm:block'>
+      <div className='flex items-center space-x-2 hidden sm:block'>
         <Button variant='ghost' onClick={scrollToFeatures}>
           Pricing
         </Button>

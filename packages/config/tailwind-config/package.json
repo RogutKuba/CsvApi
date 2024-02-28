@@ -11,8 +11,9 @@
     "clean": "git clean -xdf .turbo node_modules"
   },
   "dependencies": {
-    "@types/node": "^20",
-    "@billing/tsconfig": "workspace:*"
+    "@billing/tsconfig": "workspace:*",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/node": "^20"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

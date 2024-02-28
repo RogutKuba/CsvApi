@@ -4,6 +4,6 @@ export default {
   ...baseConfig,
   content: [
     ...baseConfig.content,
-    '../../packages/ui/src/components/**/*.{ts,tsx}',
+    '../../packages/ui/src/components/**/*.{ts,tsx,md,mdx}',
   ],
 };
