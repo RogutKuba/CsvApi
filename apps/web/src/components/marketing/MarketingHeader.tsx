@@ -8,11 +8,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@billing/ui/src/components/dropdown-menu';
 import { SignupLink } from './SignupLink';
+import Link from 'next/link';
 
 export const MarketingHeader = () => {
   const scrollToFeatures = () => {
@@ -22,16 +22,18 @@ export const MarketingHeader = () => {
 
   return (
     <ContentHeader>
-      <div className='flex items-center gap-2'>
+      <Link href='/' className='flex items-center gap-2'>
         <img src='/csv.svg' alt='CSVAPI' height={30} width={30} />
         <Typography.h1>CSVAPI</Typography.h1>
-      </div>
+      </Link>
 
       <div className='flex items-center space-x-2 hidden sm:block'>
         <Button variant='ghost' onClick={scrollToFeatures}>
           Pricing
         </Button>
-        {/* <Button variant='ghost'>Blog</Button> */}
+        <Link href='/blog'>
+          <Button variant='ghost'>Blog</Button>
+        </Link>
         <SignupButton text='Get Started' />
       </div>
 
@@ -46,6 +48,9 @@ export const MarketingHeader = () => {
             <DropdownMenuItem onClick={scrollToFeatures}>
               Pricing
             </DropdownMenuItem>
+            <Link href='/blog'>
+              <DropdownMenuItem>Blog</DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

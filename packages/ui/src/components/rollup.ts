@@ -16,3 +16,4 @@ export * from './table';
 export * from './dropzone';
 export * from './checkbox';
 export * from './select';
+export * from './separator';

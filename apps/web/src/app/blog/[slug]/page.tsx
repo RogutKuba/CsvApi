@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { PostBody } from './components/PostBody';
 import { getPost, getPosts } from '@billing/web/helpers/blog';
 
-export default async function PostPage({
+export default async function BlogPostPage({
   params,
 }: {
   params: {
@@ -13,11 +13,7 @@ export default async function PostPage({
   // notFound is a Next.js utility
   if (!post) return notFound();
   // Pass the post contents to MDX
-  return (
-    <div className='flex items-center justify-between p-4 mx-2 md:mx-32 lg:mx-72'>
-      <PostBody>{post?.body}</PostBody>
-    </div>
-  );
+  return <PostBody>{post?.body}</PostBody>;
 }
 
 export async function generateStaticParams() {
