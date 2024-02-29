@@ -18,8 +18,8 @@ export default async function BlogPage() {
       <ul className='flex flex-col space-y-8'>
         <Separator />
         {posts.map((post) => (
-          <Link href={`/blog/${post.slug}`}>
-            <li key={post.slug} className='space-y-2'>
+          <Link key={post.slug} href={`/blog/${post.slug}`}>
+            <li className='space-y-2'>
               <Typography.large className='text-2xl'>
                 {post.title}
               </Typography.large>
