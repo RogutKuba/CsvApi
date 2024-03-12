@@ -15,11 +15,6 @@ import { SignupLink } from './SignupLink';
 import Link from 'next/link';
 
 export const MarketingHeader = () => {
-  const scrollToFeatures = () => {
-    const features = document.getElementById('features');
-    features?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <ContentHeader>
       <Link href='/' className='flex items-center gap-2'>
@@ -28,9 +23,10 @@ export const MarketingHeader = () => {
       </Link>
 
       <div className='flex items-center space-x-2 hidden sm:block'>
-        <Button variant='ghost' onClick={scrollToFeatures}>
-          Pricing
-        </Button>
+        <Link href='/pricing'>
+          <Button variant='ghost'>Pricing</Button>
+        </Link>
+
         <Link href='/blog'>
           <Button variant='ghost'>Blog</Button>
         </Link>
@@ -45,9 +41,11 @@ export const MarketingHeader = () => {
           <DropdownMenuContent align='end'>
             <SignupLink />
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={scrollToFeatures}>
-              Pricing
-            </DropdownMenuItem>
+
+            <Link href='/pricing'>
+              <DropdownMenuItem>Pricing</DropdownMenuItem>
+            </Link>
+
             <Link href='/blog'>
               <DropdownMenuItem>Blog</DropdownMenuItem>
             </Link>
