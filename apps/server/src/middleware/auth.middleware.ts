@@ -73,7 +73,10 @@ export const authMiddleware = createMiddleware(async (ctx, next) => {
       const { user } = await AuthService.createOrGetUser({ workOsUser, db });
 
       ctx.set('workOsUser', workOsUser);
+      user.requestCount = (user.requestCount || 0) + 1;
+      await db.user.update({ id: user.id, requestCount: user.requestCount });
       ctx.set('user', user);
+
 
       await next();
     } catch (e: any) {
