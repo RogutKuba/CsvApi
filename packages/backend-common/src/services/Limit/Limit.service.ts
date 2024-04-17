@@ -66,12 +66,10 @@ export const LimitService = {
     // check if we need to update request counta
     // only update request count if expiry date has passed
     // OR if we hit random 10% chance of rng == 5
-    if (expiryDate.isAfter(dayjs()) || getRandomNum() === 5) {
       await LimitService.updateRequestsCount({
-        account,
-        db,
+          account,
+          db,
       });
-    } else {
     }
 
     return true;
