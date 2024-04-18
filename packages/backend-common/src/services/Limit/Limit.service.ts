@@ -63,15 +63,11 @@ export const LimitService = {
       return Math.round(Math.random() * 10);
     };
 
-    // check if we need to update request counta
-    // only update request count if expiry date has passed
-    // OR if we hit random 10% chance of rng == 5
-    if (expiryDate.isAfter(dayjs()) || getRandomNum() === 5) {
-      await LimitService.updateRequestsCount({
+    // Update request count on every request
+    await LimitService.incrementRequestCount({
         account,
         db,
-      });
-    } else {
+    });
     }
 
     return true;
@@ -113,5 +109,15 @@ export const LimitService = {
       .update(accountsTable)
       .set({ numApis: sql`${accountsTable.numApis} + ${num}` })
       .where(eq(accountsTable.id, accountId));
+  },
+  incrementRequestCount: async (params: {
+    account: AuthResponse['account'];
+    db: DbClient;
+  }) => {
+    const { account, db } = params;
+    await db
+      .update(accountsTable)
+      .set({ numRequests: sql`${accountsTable.numRequests} + 1` })
+      .where(eq(accountsTable.id, account.id));
   },
 };
